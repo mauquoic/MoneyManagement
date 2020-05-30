@@ -1,0 +1,16 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  jpa:
+    database: postgresql
+    show-sql: false
+    hibernate:
+      ddl-auto: create-drop
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
+server:
+  servlet:
+    session:
+      cookie:
+        http-only: true
+        secure: true

@@ -1,0 +1,12 @@
+# Local configuration
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+  jpa:
+    database: postgresql
+    show-sql: false
+    hibernate:
+      ddl-auto: create-drop
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
