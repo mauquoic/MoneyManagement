@@ -4,8 +4,10 @@ import com.mauquoi.money.business.service.AccountService
 import com.mauquoi.money.const.URL.Account.ACCOUNT_BY_ID
 import com.mauquoi.money.const.URL.Account.ADD_ACCOUNT_AUDIT
 import com.mauquoi.money.const.URL.Account.BASE
+import com.mauquoi.money.const.URL.Account.EDIT_ACCOUNT_AUDIT
 import com.mauquoi.money.const.URL.Account.UPDATE_ACCOUNT
 import com.mauquoi.money.const.URL.PathVariable.ACCOUNT_ID
+import com.mauquoi.money.const.URL.PathVariable.AUDIT_ID
 import com.mauquoi.money.const.URL.PathVariable.USER_ID
 import com.mauquoi.money.model.Account
 import com.mauquoi.money.model.audit.AccountAudit
@@ -45,6 +47,13 @@ class AccountController @Inject constructor(private val accountService: AccountS
     fun addAccountAudit(@PathVariable(ACCOUNT_ID) accountId: Long,
                         @RequestBody accountAudit: AccountAudit): ResponseEntity<Nothing> {
         accountService.updateAccountValue(accountId, accountAudit = accountAudit)
+        return ResponseEntity.noContent().build()
+    }
+
+    @PutMapping(EDIT_ACCOUNT_AUDIT)
+    fun editAccountAudit(@PathVariable(AUDIT_ID) auditId: Long,
+                         @RequestBody accountAudit: AccountAudit): ResponseEntity<Nothing> {
+        accountService.editAudit(auditId, accountAudit)
         return ResponseEntity.noContent().build()
     }
 

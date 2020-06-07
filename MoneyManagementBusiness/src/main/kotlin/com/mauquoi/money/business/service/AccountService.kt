@@ -59,4 +59,13 @@ class AccountService @Inject constructor(private val userRepository: UserReposit
         return getAccounts(userId).sumBy { it.amount }
     }
 
+    fun editAudit(auditId: Long, accountAudit: AccountAudit) {
+        val entry = accountAuditRepository.findById(auditId).get()
+        val new = entry.copy(from = accountAudit.from,
+                to = accountAudit.to,
+                amount = accountAudit.amount
+        )
+        accountAuditRepository.save(new)
+    }
+
 }
