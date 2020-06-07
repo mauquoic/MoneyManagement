@@ -10,8 +10,8 @@ import javax.inject.Inject
 class DepositService @Inject constructor(private val userRepository: UserRepository,
                                          private val depositRepository: DepositRepository) {
 
-    fun getDeposits(): List<Deposit> {
-        return depositRepository.findAll()
+    fun getDeposits(userId: Long): List<Deposit> {
+        return depositRepository.findAllBelongingToUser(userId).toList().sortedBy { it.id }
     }
 
     fun getDeposit(id: Long): Deposit {
@@ -34,8 +34,7 @@ class DepositService @Inject constructor(private val userRepository: UserReposit
     }
 
     fun getTotalDepositsValue(userId: Long): Int {
-        val deposits = depositRepository.findAllBelongingToUser(userId)
-        return deposits.sumBy { it.amount }
+        return getDeposits(userId).sumBy { it.amount }
     }
 
 }

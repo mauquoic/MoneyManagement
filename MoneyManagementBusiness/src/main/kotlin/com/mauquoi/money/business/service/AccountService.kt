@@ -1,17 +1,21 @@
 package com.mauquoi.money.business.service
 
 import com.mauquoi.money.model.Account
+import com.mauquoi.money.model.audit.AccountAudit
 import com.mauquoi.money.repository.AccountRepository
 import com.mauquoi.money.repository.UserRepository
+import com.mauquoi.money.repository.audit.AccountAuditRepository
 import org.springframework.stereotype.Service
+import java.time.LocalDate
 import javax.inject.Inject
 
 @Service
 class AccountService @Inject constructor(private val userRepository: UserRepository,
-                                         private val accountRepository: AccountRepository) {
+                                         private val accountRepository: AccountRepository,
+                                         private val accountAuditRepository: AccountAuditRepository) {
 
-    fun getAccounts(): List<Account> {
-        return accountRepository.findAll()
+    fun getAccounts(userId: Long): List<Account> {
+        return accountRepository.findAllBelongingToUser(userId).toList().sortedBy { it.id }
     }
 
     fun addAccount(userId: Long, accountDto: Account): Account {
@@ -21,12 +25,30 @@ class AccountService @Inject constructor(private val userRepository: UserReposit
     }
 
     fun editAccount(id: Long, account: Account): Account {
-        val savedAccount = accountRepository.findById(id)
-        val editedAccount = savedAccount.get().copy(name = account.name,
+        val savedAccount = getAccount(id)
+        val editedAccount = savedAccount.copy(name = account.name,
                 currency = account.currency,
                 amount = account.amount,
                 description = account.description)
         return accountRepository.save(editedAccount)
+    }
+
+    fun updateAccountValue(accountId: Long, amount: Int? = null, accountAudit: AccountAudit? = null) {
+        val account = getAccount(accountId)
+        val new = AccountAudit(account = account,
+                amount = accountAudit?.amount ?: account.amount,
+                from = accountAudit?.from ?: getLatestAuditForAccount(accountId) ?: LocalDate.now(),
+                to = accountAudit?.to ?: LocalDate.now()
+        )
+        accountAuditRepository.save(new)
+        amount?.let {
+            val updatedAccount = account.copy(amount = amount)
+            accountRepository.save(updatedAccount)
+        }
+    }
+
+    private fun getLatestAuditForAccount(accountId: Long): LocalDate? {
+        return accountAuditRepository.getLatestAuditForAccount(accountId)
     }
 
     fun getAccount(id: Long): Account {
@@ -34,8 +56,7 @@ class AccountService @Inject constructor(private val userRepository: UserReposit
     }
 
     fun getTotalAccountValue(userId: Long): Int {
-        val accounts = accountRepository.findAllBelongingToUser(userId)
-        return accounts.sumBy { it.amount }
+        return getAccounts(userId).sumBy { it.amount }
     }
 
 }
