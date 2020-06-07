@@ -16,21 +16,20 @@ class StockController @Inject constructor(private val stockService: StockService
         return ResponseEntity.ok(stockService.getStocks(userId))
     }
 
-//    @GetMapping("/{id}")
-//    fun getStock(@PathVariable("id") id: String): ResponseEntity<Stock> {
-//        return ResponseEntity.ok(Stock())
-//    }
+    @GetMapping("/{id}")
+    fun getStock(@PathVariable("id") id: Long): ResponseEntity<Stock> {
+        return ResponseEntity.ok(stockService.getStock(id))
+    }
 
     @PutMapping("/{id}")
     fun putStock(@PathVariable("id") id: Long,
                  @RequestBody stock: Stock): ResponseEntity<Stock> {
-        return ResponseEntity.ok(stock)
+        return ResponseEntity.ok(stockService.editStock(id, stock))
     }
 
     @PostMapping()
     fun addStock(@PathVariable(URL.PathVariable.USER_ID) userId: Long,
                  @RequestBody stock: Stock): ResponseEntity<Stock> {
-        val stock = stockService.addStock(userId, stock)
-        return ResponseEntity.ok(stock);
+        return ResponseEntity.ok(stockService.addStock(userId, stock))
     }
 }
