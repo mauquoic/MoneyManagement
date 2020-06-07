@@ -1,37 +1,35 @@
 package com.mauquoi.money.controller
 
+import com.mauquoi.money.business.service.DepositService
+import com.mauquoi.money.const.URL
 import com.mauquoi.money.model.Deposit
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import javax.inject.Inject
 
 @RestController
-@RequestMapping("/api/deposits")
-class DepositController {
-
-    val deposits = mutableListOf(Deposit(), Deposit(id = 2, description = "I have a description", currency = "USD"), Deposit(id = 3), Deposit(id = 4), Deposit(id = 5)
-            , Deposit(id = 6), Deposit(id = 7)
-    )
-
-
+@RequestMapping("/api/v1/users/{userId}/deposits")
+class DepositController @Inject constructor(private val depositService: DepositService) {
 
     @GetMapping
     fun getDeposits(): ResponseEntity<List<Deposit>> {
-        return ResponseEntity.ok(deposits)
+        return ResponseEntity.ok(depositService.getDeposits())
     }
 
     @GetMapping("/{id}")
-    fun getDeposit(@PathVariable("id") id: String): ResponseEntity<Deposit> {
-        return ResponseEntity.ok(Deposit())
+    fun getDeposit(@PathVariable("id") id: Long): ResponseEntity<Deposit> {
+        return ResponseEntity.ok(depositService.getDeposit(id))
     }
 
     @PutMapping("/{id}")
-    fun putDeposit(@PathVariable("id") id: String,
+    fun putDeposit(@PathVariable("id") id: Long,
                    @RequestBody deposit: Deposit): ResponseEntity<Deposit> {
-        return ResponseEntity.ok(deposit);
+        return ResponseEntity.ok(depositService.editDeposit(id, deposit));
     }
 
     @PostMapping()
-    fun putDeposit(@RequestBody deposit: Deposit): ResponseEntity<Deposit> {
-        return ResponseEntity.ok(deposit);
+    fun addDeposit(@PathVariable(URL.PathVariable.USER_ID) userId: Long,
+                   @RequestBody deposit: Deposit): ResponseEntity<Deposit> {
+        return ResponseEntity.ok(depositService.addDeposit(userId, deposit));
     }
 }

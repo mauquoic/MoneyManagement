@@ -1,14 +1,16 @@
 package com.mauquoi.money.model
 
 import javax.persistence.*
+import javax.validation.constraints.NotNull
 
 @Entity
 @Table(name = "account")
 data class Account(@Id
                    @GeneratedValue(strategy = GenerationType.IDENTITY)
                    var id: Long? = null,
-                   val name: String = "Name",
-                   val amount: Int = 2000,
-                   val currency: String = "CNY",
-                   val description: String? = null
+                   @Column(name = "name", nullable = false) @NotNull val name: String = "Name",
+                   @Column(name = "amount", nullable = false) @NotNull val amount: Int = 2000,
+                   @Column(name = "currency", nullable = false) @NotNull val currency: String = "CNY",
+                   @Column(name = "description") val description: String? = null,
+                   @ManyToOne val user: User? = null
 )

@@ -1,13 +1,18 @@
 spring:
   main:
     allow-bean-definition-overriding: true
+
   jpa:
     database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQL9Dialect
     show-sql: false
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
       naming:
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
+      validator:
+        apply_to_ddl: true
+
 server:
   servlet:
     session:

@@ -1,0 +1,17 @@
+@startuml
+actor User
+User -> UI: Registration Request
+UI -> Thau: getToken
+Thau -> DB: storeUserAndToken
+DB -> Thau: OK
+Thau -> UI: token
+UI -> User: loggedIn
+User -> UI: doWhatever(token)
+UI -> App: doWhatever(token)
+App -> Thau: getUser(token)
+Thau -> App: user
+App -> App: doWhatever
+App -> UI: whateverDone
+UI -> User: whateverDone
+
+@enduml

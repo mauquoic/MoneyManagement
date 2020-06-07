@@ -1,0 +1,7 @@
+# Configuration for a docker compose environment
+spring:
+  datasource:
+    url: jdbc:postgresql://db/moneymanagement
+    username: postgres
+    password: changeme
+    driver-class-name: org.postgresql.Driver

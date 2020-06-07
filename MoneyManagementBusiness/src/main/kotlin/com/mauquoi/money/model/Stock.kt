@@ -1,26 +1,55 @@
 package com.mauquoi.money.model
 
 import java.time.LocalDate
+import javax.persistence.*
+import javax.validation.constraints.NotNull
 
-data class Stock(val id: Int? = 1,
-                 val name: String = "Name",
-                 val shortForm: String = "XYZ",
-                 val value: Float = 43.3f,
-                 val currency: String = "CNY",
-                 val positions: List<Position> = emptyList(),
-                 val dividends: List<Dividend> = emptyList(),
-                 val description: String? = "desc"
-)
+@Entity
+@Table(name = "stock")
+data class Stock(
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        var id: Long? = null,
+        @Column(name = "name", nullable = false) @NotNull val name: String,
+        @Column(name = "shortForm") val shortForm: String? = null,
+        @Column(name = "value", nullable = false) @NotNull val value: Float,
+        @Column(name = "currency", nullable = false) @NotNull val currency: String,
+        @OneToMany(cascade = [CascadeType.ALL]) val positions: List<Position> = emptyList(),
+        @OneToMany(cascade = [CascadeType.ALL]) val dividends: List<Dividend> = emptyList(),
+        @Column(name = "description") val description: String? = null,
+        @ManyToOne val user: User? = null
+) {
+    val totalValue = calculateValue()
+    val totalCosts = calculateCosts()
+    val totalReturn = calculateValue() + dividends.fold(0f) { acc, dividend -> acc + dividend.totalAmount }
 
-data class Position(val id: Int? = 1,
-                    val amount: Int = 10,
-                    val purchasePrice: Float = 20.8f,
-                    val fees: Float = 20.8f,
-                    val date: LocalDate? = null
-)
+    fun calculateValue(): Float {
+        return positions.sumBy { it.amount }.times(this.value)
+    }
 
-data class Dividend(val id: Int? = 1,
-                    val perItem: Float?,
-                    val totalAmount: Float?,
-                    val date: LocalDate? = LocalDate.now()
+    fun calculateCosts(): Float {
+        return positions.fold(0f){acc, position -> acc + position.calculateCosts()}
+    }
+}
+
+@Entity
+data class Position(@Id
+                    @GeneratedValue(strategy = GenerationType.IDENTITY)
+                    var id: Long? = null,
+                    @Column(name = "amount", nullable = false) @NotNull val amount: Int,
+                    @Column(name = "purchasePrice", nullable = false) @NotNull val purchasePrice: Float,
+                    @Column(name = "fees", nullable = false) @NotNull val fees: Float = 0f,
+                    @Column(name = "date", nullable = false) @NotNull val date: LocalDate
+) {
+    fun calculateCosts(): Float {
+        return amount * purchasePrice + fees
+    }
+}
+
+@Entity
+data class Dividend(@Id
+                    @GeneratedValue(strategy = GenerationType.IDENTITY)
+                    var id: Long? = null,
+                    @Column(name = "totalAmount", nullable = false) @NotNull val totalAmount: Float,
+                    @Column(name = "date", nullable = false) @NotNull val date: LocalDate? = LocalDate.now()
 )

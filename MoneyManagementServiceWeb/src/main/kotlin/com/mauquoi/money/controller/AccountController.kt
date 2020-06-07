@@ -1,37 +1,39 @@
 package com.mauquoi.money.controller
 
 import com.mauquoi.money.business.service.AccountService
+import com.mauquoi.money.const.URL.Account.BASE
+import com.mauquoi.money.const.URL.Account.ACCOUNT_BY_ID
+import com.mauquoi.money.const.URL.PathVariable.ACCOUNT_ID
+import com.mauquoi.money.const.URL.PathVariable.USER_ID
 import com.mauquoi.money.model.Account
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import javax.inject.Inject
 
 @RestController
-@RequestMapping("/api/accounts")
+@RequestMapping(BASE)
 class AccountController @Inject constructor(private val accountService: AccountService) {
-
-    val accounts = mutableListOf(Account(), Account(id = 2, description = "I have a description", currency = "USD"), Account(id = 3), Account(id = 4), Account(id = 5)
-            , Account(id = 6), Account(id = 7)
-    )
 
     @GetMapping
     fun getAccounts(): ResponseEntity<List<Account>> {
         return ResponseEntity.ok(accountService.getAccounts())
     }
 
-    @GetMapping("/{id}")
-    fun getAccount(@PathVariable("id") id: String): ResponseEntity<Account> {
-        return ResponseEntity.ok(Account())
+    @GetMapping(ACCOUNT_BY_ID)
+    fun getAccount(@PathVariable(USER_ID) userId: Long,
+                   @PathVariable(ACCOUNT_ID) accountId: Long): ResponseEntity<Account> {
+        return ResponseEntity.ok(accountService.getAccount(accountId))
     }
 
-    @PutMapping("/{id}")
-    fun editAccount(@PathVariable("id") id: Long,
-                   @RequestBody account: Account): ResponseEntity<Account> {
-        return ResponseEntity.ok(accountService.editAccount(id, account));
+    @PutMapping(ACCOUNT_BY_ID)
+    fun editAccount(@PathVariable(ACCOUNT_ID) accountId: Long,
+                    @RequestBody account: Account): ResponseEntity<Account> {
+        return ResponseEntity.ok(accountService.editAccount(accountId, account))
     }
 
     @PostMapping()
-    fun addAccount(@RequestBody account: Account): ResponseEntity<Account> {
-        return ResponseEntity.ok(accountService.addAccount(account));
+    fun addAccount(@PathVariable(USER_ID) userId: Long,
+                   @RequestBody account: Account): ResponseEntity<Account> {
+        return ResponseEntity.ok(accountService.addAccount(userId, account))
     }
 }
