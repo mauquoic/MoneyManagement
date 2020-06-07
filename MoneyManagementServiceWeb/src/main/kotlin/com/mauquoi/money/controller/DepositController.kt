@@ -12,8 +12,8 @@ import javax.inject.Inject
 class DepositController @Inject constructor(private val depositService: DepositService) {
 
     @GetMapping
-    fun getDeposits(): ResponseEntity<List<Deposit>> {
-        return ResponseEntity.ok(depositService.getDeposits())
+    fun getDeposits(@PathVariable(URL.PathVariable.USER_ID) userId: Long): ResponseEntity<List<Deposit>> {
+        return ResponseEntity.ok(depositService.getDeposits(userId))
     }
 
     @GetMapping("/{id}")
@@ -24,12 +24,12 @@ class DepositController @Inject constructor(private val depositService: DepositS
     @PutMapping("/{id}")
     fun putDeposit(@PathVariable("id") id: Long,
                    @RequestBody deposit: Deposit): ResponseEntity<Deposit> {
-        return ResponseEntity.ok(depositService.editDeposit(id, deposit));
+        return ResponseEntity.ok(depositService.editDeposit(id, deposit))
     }
 
     @PostMapping()
     fun addDeposit(@PathVariable(URL.PathVariable.USER_ID) userId: Long,
                    @RequestBody deposit: Deposit): ResponseEntity<Deposit> {
-        return ResponseEntity.ok(depositService.addDeposit(userId, deposit));
+        return ResponseEntity.ok(depositService.addDeposit(userId, deposit))
     }
 }
