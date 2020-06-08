@@ -10,6 +10,7 @@ object URL {
         const val BASE = "/api/v1/users/{$USER_ID}/accounts"
         const val ACCOUNT_BY_ID = "/{$ACCOUNT_ID}"
         const val UPDATE_ACCOUNT = "/{$ACCOUNT_ID}/update"
+        const val GET_ACCOUNT_HISTORY = "/{$ACCOUNT_ID}/history"
         const val ADD_ACCOUNT_AUDIT = "/{$ACCOUNT_ID}/audits"
         const val EDIT_ACCOUNT_AUDIT = "/{$ACCOUNT_ID}/audits/{$AUDIT_ID}"
     }

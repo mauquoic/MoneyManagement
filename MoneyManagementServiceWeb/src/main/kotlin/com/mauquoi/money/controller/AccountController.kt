@@ -5,12 +5,14 @@ import com.mauquoi.money.const.URL.Account.ACCOUNT_BY_ID
 import com.mauquoi.money.const.URL.Account.ADD_ACCOUNT_AUDIT
 import com.mauquoi.money.const.URL.Account.BASE
 import com.mauquoi.money.const.URL.Account.EDIT_ACCOUNT_AUDIT
+import com.mauquoi.money.const.URL.Account.GET_ACCOUNT_HISTORY
 import com.mauquoi.money.const.URL.Account.UPDATE_ACCOUNT
 import com.mauquoi.money.const.URL.PathVariable.ACCOUNT_ID
 import com.mauquoi.money.const.URL.PathVariable.AUDIT_ID
 import com.mauquoi.money.const.URL.PathVariable.USER_ID
 import com.mauquoi.money.model.Account
 import com.mauquoi.money.model.audit.AccountAudit
+import com.mauquoi.money.model.history.AccountHistory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import javax.inject.Inject
@@ -22,6 +24,12 @@ class AccountController @Inject constructor(private val accountService: AccountS
     @GetMapping
     fun getAccounts(@PathVariable(USER_ID) userId: Long): ResponseEntity<List<Account>> {
         return ResponseEntity.ok(accountService.getAccounts(userId))
+    }
+
+    @PostMapping
+    fun addAccount(@PathVariable(USER_ID) userId: Long,
+                   @RequestBody account: Account): ResponseEntity<Account> {
+        return ResponseEntity.ok(accountService.addAccount(userId, account))
     }
 
     @GetMapping(ACCOUNT_BY_ID)
@@ -57,9 +65,10 @@ class AccountController @Inject constructor(private val accountService: AccountS
         return ResponseEntity.noContent().build()
     }
 
-    @PostMapping()
-    fun addAccount(@PathVariable(USER_ID) userId: Long,
-                   @RequestBody account: Account): ResponseEntity<Account> {
-        return ResponseEntity.ok(accountService.addAccount(userId, account))
+    @GetMapping(GET_ACCOUNT_HISTORY)
+    fun getAccountHistory(@PathVariable(ACCOUNT_ID) accountId: Long): ResponseEntity<AccountHistory> {
+        val history = accountService.getHistory(accountId)
+        return ResponseEntity.ok(history)
     }
+
 }

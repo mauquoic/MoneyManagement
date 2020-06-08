@@ -2,6 +2,7 @@ package com.mauquoi.money.business.service
 
 import com.mauquoi.money.model.Account
 import com.mauquoi.money.model.audit.AccountAudit
+import com.mauquoi.money.model.history.AccountHistory
 import com.mauquoi.money.repository.AccountRepository
 import com.mauquoi.money.repository.UserRepository
 import com.mauquoi.money.repository.audit.AccountAuditRepository
@@ -66,6 +67,14 @@ class AccountService @Inject constructor(private val userRepository: UserReposit
                 amount = accountAudit.amount
         )
         accountAuditRepository.save(new)
+    }
+
+    fun getHistory(accountId: Long): AccountHistory {
+        val account = getAccount(accountId)
+        val audits = accountAuditRepository.getAuditsForAccount(accountId)
+                .toList()
+                .sortedBy { it.from }
+        return AccountHistory(current = account, history = audits)
     }
 
 }
