@@ -1,5 +1,6 @@
 package com.mauquoi.money.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import java.time.LocalDate
 import javax.persistence.*
 import javax.validation.constraints.NotNull
@@ -17,7 +18,7 @@ data class Stock(
         @OneToMany(cascade = [CascadeType.ALL]) val positions: List<Position> = emptyList(),
         @OneToMany(cascade = [CascadeType.ALL]) val dividends: List<Dividend> = emptyList(),
         @Column(name = "description") val description: String? = null,
-        @ManyToOne val user: User? = null
+        @ManyToOne @JsonIgnore val user: User? = null
 ) {
     val totalValue = calculateValue()
     val totalCosts = calculateCosts()
@@ -28,7 +29,7 @@ data class Stock(
     }
 
     fun calculateCosts(): Float {
-        return positions.fold(0f){acc, position -> acc + position.calculateCosts()}
+        return positions.fold(0f) { acc, position -> acc + position.calculateCosts() }
     }
 }
 
