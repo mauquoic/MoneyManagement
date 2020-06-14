@@ -1,5 +1,6 @@
 package com.mauquoi.money.model
 
+import java.util.*
 import javax.persistence.*
 import javax.validation.constraints.NotNull
 
@@ -9,7 +10,18 @@ data class User(@Id
                 @GeneratedValue(strategy = GenerationType.IDENTITY)
                 var id: Long? = null,
                 @Column(name = "email", nullable = false) @NotNull val email: String,
+                @OneToOne(cascade = [CascadeType.ALL]) @JoinColumn(name = "preferences_id") val preferences: UserPreferences? = UserPreferences(),
                 @OneToMany(cascade = [CascadeType.ALL]) val deposits: Set<Deposit>,
                 @OneToMany(cascade = [CascadeType.ALL]) val stocks: Set<Stock>,
                 @OneToMany(cascade = [CascadeType.ALL]) val accounts: Set<Account>
+)
+
+@Entity
+@Table(name = "preferences")
+data class UserPreferences(
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        var id: Long? = null,
+        @Column(name = "language") val locale: Locale = Locale.UK,
+        @Column(name = "currency") val currency: Currency = Currency.getInstance("EUR")
 )
