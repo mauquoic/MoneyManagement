@@ -1,7 +1,7 @@
 package com.mauquoi.money.business.service
 
 import com.mauquoi.money.model.Account
-import com.mauquoi.money.model.audit.AccountAudit
+import com.mauquoi.money.model.audit.AccountSnapshot
 import com.mauquoi.money.model.history.AccountHistory
 import com.mauquoi.money.repository.AccountRepository
 import com.mauquoi.money.repository.UserRepository
@@ -34,12 +34,11 @@ class AccountService @Inject constructor(private val userRepository: UserReposit
         return accountRepository.save(editedAccount)
     }
 
-    fun updateAccountValue(accountId: Long, amount: Int? = null, accountAudit: AccountAudit? = null) {
+    fun updateAccountValue(accountId: Long, amount: Int? = null, accountSnapshot: AccountSnapshot? = null) {
         val account = getAccount(accountId)
-        val new = AccountAudit(account = account,
-                amount = accountAudit?.amount ?: account.amount,
-                from = accountAudit?.from ?: getLatestAuditForAccount(accountId) ?: LocalDate.now(),
-                to = accountAudit?.to ?: LocalDate.now()
+        val new = AccountSnapshot(account = account,
+                amount = accountSnapshot?.amount ?: account.amount,
+                date = accountSnapshot?.date ?: getLatestAuditForAccount(accountId) ?: LocalDate.now()
         )
         accountAuditRepository.save(new)
         amount?.let {
@@ -60,11 +59,10 @@ class AccountService @Inject constructor(private val userRepository: UserReposit
         return getAccounts(userId).sumBy { it.amount }
     }
 
-    fun editAudit(auditId: Long, accountAudit: AccountAudit) {
+    fun editAudit(auditId: Long, accountSnapshot: AccountSnapshot) {
         val entry = accountAuditRepository.findById(auditId).get()
-        val new = entry.copy(from = accountAudit.from,
-                to = accountAudit.to,
-                amount = accountAudit.amount
+        val new = entry.copy(date = accountSnapshot.date,
+                amount = accountSnapshot.amount
         )
         accountAuditRepository.save(new)
     }
@@ -73,7 +71,7 @@ class AccountService @Inject constructor(private val userRepository: UserReposit
         val account = getAccount(accountId)
         val audits = accountAuditRepository.getAuditsForAccount(accountId)
                 .toList()
-                .sortedBy { it.from }
+                .sortedBy { it.date }
         return AccountHistory(current = account, history = audits)
     }
 

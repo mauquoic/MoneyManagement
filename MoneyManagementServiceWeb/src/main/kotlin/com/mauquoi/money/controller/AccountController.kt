@@ -11,7 +11,7 @@ import com.mauquoi.money.const.URL.PathVariable.ACCOUNT_ID
 import com.mauquoi.money.const.URL.PathVariable.AUDIT_ID
 import com.mauquoi.money.const.URL.PathVariable.USER_ID
 import com.mauquoi.money.model.Account
-import com.mauquoi.money.model.audit.AccountAudit
+import com.mauquoi.money.model.audit.AccountSnapshot
 import com.mauquoi.money.model.history.AccountHistory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -53,15 +53,15 @@ class AccountController @Inject constructor(private val accountService: AccountS
 
     @PostMapping(ADD_ACCOUNT_AUDIT)
     fun addAccountAudit(@PathVariable(ACCOUNT_ID) accountId: Long,
-                        @RequestBody accountAudit: AccountAudit): ResponseEntity<Nothing> {
-        accountService.updateAccountValue(accountId, accountAudit = accountAudit)
+                        @RequestBody accountSnapshot: AccountSnapshot): ResponseEntity<Nothing> {
+        accountService.updateAccountValue(accountId, accountSnapshot = accountSnapshot)
         return ResponseEntity.noContent().build()
     }
 
     @PutMapping(EDIT_ACCOUNT_AUDIT)
     fun editAccountAudit(@PathVariable(AUDIT_ID) auditId: Long,
-                         @RequestBody accountAudit: AccountAudit): ResponseEntity<Nothing> {
-        accountService.editAudit(auditId, accountAudit)
+                         @RequestBody accountSnapshot: AccountSnapshot): ResponseEntity<Nothing> {
+        accountService.editAudit(auditId, accountSnapshot)
         return ResponseEntity.noContent().build()
     }
 
