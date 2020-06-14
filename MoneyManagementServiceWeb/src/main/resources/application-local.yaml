@@ -5,3 +5,7 @@ spring:
     username: postgres
     password: changeme
     driver-class-name: org.postgresql.Driver
+
+rest:
+  url:
+    ecb: https://api.exchangeratesapi.io/latest
