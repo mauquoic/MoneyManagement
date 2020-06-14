@@ -46,7 +46,7 @@ class AccountController @Inject constructor(private val accountService: AccountS
 
     @PutMapping(UPDATE_ACCOUNT)
     fun updateAccount(@PathVariable(ACCOUNT_ID) accountId: Long,
-                      @RequestParam(name = "amount", required = true) amount: Int): ResponseEntity<Nothing> {
+                      @RequestParam(name = "amount", required = true) amount: Float): ResponseEntity<Nothing> {
         accountService.updateAccountValue(accountId, amount)
         return ResponseEntity.noContent().build()
     }

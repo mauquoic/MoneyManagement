@@ -22,7 +22,7 @@ class OverviewController @Inject constructor(private val stockService: StockServ
 
     @GetMapping
     fun getOverview(@PathVariable("userId") userId: Long): ResponseEntity<Overview> {
-        val overview = Overview(cash = accountService.getTotalAccountValue(userId),
+        val overview = Overview(cash = accountService.getTotalAccountValue(userId).toInt(),
                 assets = stockService.getTotalStocksValue(userId).toInt(),
                 deposits = depositService.getTotalDepositsValue(userId),
                 cryptos = 0)

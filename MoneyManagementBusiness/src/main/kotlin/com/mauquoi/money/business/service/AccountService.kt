@@ -13,7 +13,8 @@ import javax.inject.Inject
 @Service
 class AccountService @Inject constructor(private val userRepository: UserRepository,
                                          private val accountRepository: AccountRepository,
-                                         private val accountAuditRepository: AccountAuditRepository) {
+                                         private val accountAuditRepository: AccountAuditRepository,
+                                         private val currencyService: CurrencyService) {
 
     fun getAccounts(userId: Long): List<Account> {
         return accountRepository.findAllBelongingToUser(userId).toList().sortedBy { it.id }
@@ -22,6 +23,7 @@ class AccountService @Inject constructor(private val userRepository: UserReposit
     fun addAccount(userId: Long, accountDto: Account): Account {
         val user = userRepository.findById(userId).get()
         val account = accountDto.copy(user = user)
+        user.preferences?.let { account.amountInPreferredCurrency = currencyService.convertCurrency(account.amount, account.currency, it.currency) }
         return accountRepository.save(account)
     }
 
@@ -34,7 +36,7 @@ class AccountService @Inject constructor(private val userRepository: UserReposit
         return accountRepository.save(editedAccount)
     }
 
-    fun updateAccountValue(accountId: Long, amount: Int? = null, accountSnapshot: AccountSnapshot? = null) {
+    fun updateAccountValue(accountId: Long, amount: Float? = null, accountSnapshot: AccountSnapshot? = null) {
         val account = getAccount(accountId)
         val new = AccountSnapshot(account = account,
                 amount = accountSnapshot?.amount ?: account.amount,
@@ -55,8 +57,8 @@ class AccountService @Inject constructor(private val userRepository: UserReposit
         return accountRepository.findById(id).get()
     }
 
-    fun getTotalAccountValue(userId: Long): Int {
-        return getAccounts(userId).sumBy { it.amount }
+    fun getTotalAccountValue(userId: Long): Float {
+        return getAccounts(userId).sumByDouble { it.amount.toDouble() }.toFloat()
     }
 
     fun editAudit(auditId: Long, accountSnapshot: AccountSnapshot) {

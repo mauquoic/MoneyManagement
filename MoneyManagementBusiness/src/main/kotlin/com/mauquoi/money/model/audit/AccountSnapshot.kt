@@ -11,6 +11,6 @@ data class AccountSnapshot(@Id
                            @GeneratedValue(strategy = GenerationType.IDENTITY)
                            var id: Long? = null,
                            @ManyToOne @JsonIgnore val account: Account?,
-                           @Column(name = "amount", nullable = false) val amount: Int,
+                           @Column(name = "amount", nullable = false) val amount: Float,
                            @Column(name = "date", nullable = false) val date: LocalDate
 )
