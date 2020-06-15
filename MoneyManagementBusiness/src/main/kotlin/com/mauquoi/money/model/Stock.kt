@@ -12,8 +12,8 @@ data class Stock(
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         var id: Long? = null,
         @Column(name = "name", nullable = false) @NotNull val name: String,
-        @Column(name = "shortForm") val shortForm: String? = null,
-        @Column(name = "value", nullable = false) @NotNull val value: Float,
+        @Column(name = "symbol") @NotNull val symbol: String,
+        @Column(name = "market") @NotNull val market: String,
         @Column(name = "currency", nullable = false) @NotNull val currency: String,
         @OneToMany(cascade = [CascadeType.ALL]) val positions: List<Position> = emptyList(),
         @OneToMany(cascade = [CascadeType.ALL]) val dividends: List<Dividend> = emptyList(),
@@ -24,8 +24,9 @@ data class Stock(
     val totalCosts = calculateCosts()
     val totalReturn = calculateValue() + dividends.fold(0f) { acc, dividend -> acc + dividend.totalAmount }
 
+//    todo cleanup value
     fun calculateValue(): Float {
-        return positions.sumBy { it.amount }.times(this.value)
+        return positions.sumBy { it.amount }.times(0f)
     }
 
     fun calculateCosts(): Float {

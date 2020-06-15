@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @Component
 class EcbGateway @Inject constructor(private val builder: RestTemplateBuilder,
-                                     @Value("\${rest.url.ecb}") private val baseUrl: String) {
+                                     @Value("\${rest.ecb.url}") private val baseUrl: String) {
 
     fun getConversionValues(baseCurrency: Currency, date: LocalDate? = null): CurrencyLookupDto {
         val restTemplate = builder.build()

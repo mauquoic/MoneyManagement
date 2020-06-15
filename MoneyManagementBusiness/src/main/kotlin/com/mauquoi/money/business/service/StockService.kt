@@ -1,8 +1,11 @@
 package com.mauquoi.money.business.service
 
+import com.mauquoi.money.business.gateway.finnhub.FinnhubGateway
 import com.mauquoi.money.model.Dividend
 import com.mauquoi.money.model.Position
 import com.mauquoi.money.model.Stock
+import com.mauquoi.money.model.dto.QuoteDto
+import com.mauquoi.money.model.dto.StockDto
 import com.mauquoi.money.repository.StockRepository
 import com.mauquoi.money.repository.UserRepository
 import org.springframework.stereotype.Service
@@ -10,7 +13,8 @@ import javax.inject.Inject
 
 @Service
 class StockService @Inject constructor(private val userRepository: UserRepository,
-                                       private val stockRepository: StockRepository) {
+                                       private val stockRepository: StockRepository,
+                                       private val finnhubGateway: FinnhubGateway) {
 
     fun getStocks(userId: Long): List<Stock> {
         return stockRepository.findAllBelongingToUser(userId).toList().sortedBy { it.id }
@@ -29,9 +33,8 @@ class StockService @Inject constructor(private val userRepository: UserRepositor
     fun editStock(id: Long, stock: Stock): Stock {
         val savedStock = stockRepository.findById(id).get()
         val editedStock = savedStock.copy(name = stock.name,
-                shortForm = stock.shortForm,
+                symbol = stock.symbol,
                 currency = stock.currency,
-                value = stock.value,
                 description = stock.description,
                 positions = editPositions(savedStock.positions, stock.positions),
                 dividends = editDividends(savedStock.dividends, stock.dividends)
@@ -58,5 +61,18 @@ class StockService @Inject constructor(private val userRepository: UserRepositor
     fun getTotalStocksValue(userId: Long): Float {
         val stocks = getStocks(userId)
         return stocks.sumByDouble { it.calculateValue().toDouble() }.toFloat()
+    }
+
+    fun getStockPrice(symbol: String): QuoteDto {
+        return finnhubGateway.getStockPrice(symbol)
+    }
+
+    fun getStockName(symbol: String, exchange: String): StockDto {
+        val exchangeDto = finnhubGateway.getExchange(exchange)
+        if (exchange != "US") {
+            return exchangeDto.stocks.first { it.symbol == "$symbol.$exchange" }
+        } else {
+            return exchangeDto.stocks.first { it.symbol == symbol }
+        }
     }
 }
