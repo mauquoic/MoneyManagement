@@ -8,4 +8,4 @@ spring:
 
 rest:
   url:
-    ecb: https://api.exchangeratesapi.io/latest
+    ecb: https://api.exchangeratesapi.io/{date}

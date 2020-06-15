@@ -14,6 +14,5 @@ data class Account(@Id
                    @Column(name = "amount", nullable = false) @NotNull val amount: Float,
                    @Column(name = "currency", nullable = false) @NotNull val currency: Currency,
                    @Column(name = "description") val description: String? = null,
-                   @ManyToOne @JsonIgnore val user: User? = null,
-                   @Transient var amountInPreferredCurrency: Float? = null
+                   @ManyToOne @JsonIgnore val user: User? = null
 )

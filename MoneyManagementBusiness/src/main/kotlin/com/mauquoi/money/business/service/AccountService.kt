@@ -13,8 +13,7 @@ import javax.inject.Inject
 @Service
 class AccountService @Inject constructor(private val userRepository: UserRepository,
                                          private val accountRepository: AccountRepository,
-                                         private val accountAuditRepository: AccountAuditRepository,
-                                         private val currencyService: CurrencyService) {
+                                         private val accountAuditRepository: AccountAuditRepository) {
 
     fun getAccounts(userId: Long): List<Account> {
         return accountRepository.findAllBelongingToUser(userId).toList().sortedBy { it.id }
@@ -23,7 +22,6 @@ class AccountService @Inject constructor(private val userRepository: UserReposit
     fun addAccount(userId: Long, accountDto: Account): Account {
         val user = userRepository.findById(userId).get()
         val account = accountDto.copy(user = user)
-        user.preferences?.let { account.amountInPreferredCurrency = currencyService.convertCurrency(account.amount, account.currency, it.currency) }
         return accountRepository.save(account)
     }
 
