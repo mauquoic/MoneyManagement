@@ -38,5 +38,5 @@ jobs:
     - name: Build
       run: |
         echo "Running Build job"
-        mvn clean install -Dregistry=https://maven.pkg.github.com/mauquoic -Dtoken=2490bf1edc7fc87a2e674e6f697de65a445c9415
+        mvn clean install -Dregistry=https://maven.pkg.github.com/mauquoic -Dtoken=2490bf1edc7fc87a2e674e6f697de65a445c9415 -Dspring.profiles.active=test
 
