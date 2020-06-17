@@ -11,9 +11,9 @@ data class User(@Id
                 var id: Long? = null,
                 @Column(name = "email", nullable = false) @NotNull val email: String,
                 @OneToOne(cascade = [CascadeType.ALL]) @JoinColumn(name = "preferences_id") val preferences: UserPreferences? = UserPreferences(),
-                @OneToMany(cascade = [CascadeType.ALL]) val deposits: Set<Deposit>,
-                @OneToMany(cascade = [CascadeType.ALL]) val stocks: Set<Stock>,
-                @OneToMany(cascade = [CascadeType.ALL]) val accounts: Set<Account>
+                @OneToMany(cascade = [CascadeType.ALL]) val deposits: Set<Deposit> = emptySet(),
+                @OneToMany(cascade = [CascadeType.ALL]) val stocks: Set<Stock> = emptySet(),
+                @OneToMany(cascade = [CascadeType.ALL]) val accounts: Set<Account> = emptySet()
 )
 
 @Entity

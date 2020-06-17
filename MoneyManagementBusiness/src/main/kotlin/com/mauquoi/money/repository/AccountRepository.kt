@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.Query
 
 interface AccountRepository: JpaRepository<Account, Long> {
 
-    @Query("select a from Account a where a.user.id = :userId")
-    fun findAllBelongingToUser(userId: Long): Set<Account>
+//    @Query("select a from Account a where a.user.id = :userId")
+//    fun findAllBelongingToUser(userId: Long): Set<Account>
+
+    fun findByUserId(userId: Long): Set<Account>
 }

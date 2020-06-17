@@ -17,7 +17,7 @@ class StockService @Inject constructor(private val userRepository: UserRepositor
                                        private val finnhubGateway: FinnhubGateway) {
 
     fun getStocks(userId: Long): List<Stock> {
-        return stockRepository.findAllBelongingToUser(userId).toList().sortedBy { it.id }
+        return stockRepository.findByUserId(userId).toList().sortedBy { it.id }
     }
 
     fun getStock(id: Long): Stock {

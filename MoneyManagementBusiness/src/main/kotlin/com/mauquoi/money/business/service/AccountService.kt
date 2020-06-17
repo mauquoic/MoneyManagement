@@ -16,7 +16,7 @@ class AccountService @Inject constructor(private val userRepository: UserReposit
                                          private val accountAuditRepository: AccountAuditRepository) {
 
     fun getAccounts(userId: Long): List<Account> {
-        return accountRepository.findAllBelongingToUser(userId).toList().sortedBy { it.id }
+        return accountRepository.findByUserId(userId).toList().sortedBy { it.id }
     }
 
     fun addAccount(userId: Long, accountDto: Account): Account {
@@ -34,17 +34,23 @@ class AccountService @Inject constructor(private val userRepository: UserReposit
         return accountRepository.save(editedAccount)
     }
 
-    fun updateAccountValue(accountId: Long, amount: Float? = null, accountSnapshot: AccountSnapshot? = null) {
+    fun addAccountSnapshot(accountId: Long, accountSnapshot: AccountSnapshot) {
         val account = getAccount(accountId)
-        val new = AccountSnapshot(account = account,
-                amount = accountSnapshot?.amount ?: account.amount,
-                date = accountSnapshot?.date ?: getLatestAuditForAccount(accountId) ?: LocalDate.now()
+        val new = accountSnapshot.copy(account = account,
+                date = LocalDate.now()
         )
         accountAuditRepository.save(new)
-        amount?.let {
-            val updatedAccount = account.copy(amount = amount)
-            accountRepository.save(updatedAccount)
-        }
+    }
+
+    fun updateAccountValue(accountId: Long, amount: Float) {
+        val account = getAccount(accountId)
+        val new = AccountSnapshot(account = account,
+                amount = amount,
+                date = LocalDate.now()
+        )
+        accountAuditRepository.save(new)
+        val updatedAccount = account.copy(amount = amount)
+        accountRepository.save(updatedAccount)
     }
 
     private fun getLatestAuditForAccount(accountId: Long): LocalDate? {
@@ -55,6 +61,7 @@ class AccountService @Inject constructor(private val userRepository: UserReposit
         return accountRepository.findById(id).get()
     }
 
+//    todo view how to do this with different currencies
     fun getTotalAccountValue(userId: Long): Float {
         return getAccounts(userId).sumByDouble { it.amount.toDouble() }.toFloat()
     }
@@ -69,7 +76,7 @@ class AccountService @Inject constructor(private val userRepository: UserReposit
 
     fun getHistory(accountId: Long): AccountHistory {
         val account = getAccount(accountId)
-        val audits = accountAuditRepository.getAuditsForAccount(accountId)
+        val audits = accountAuditRepository.findByAccountId(accountId)
                 .toList()
                 .sortedBy { it.date }
         return AccountHistory(current = account, history = audits)

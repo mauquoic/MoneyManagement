@@ -54,7 +54,7 @@ class AccountController @Inject constructor(private val accountService: AccountS
     @PostMapping(ADD_ACCOUNT_AUDIT)
     fun addAccountAudit(@PathVariable(ACCOUNT_ID) accountId: Long,
                         @RequestBody accountSnapshot: AccountSnapshot): ResponseEntity<Nothing> {
-        accountService.updateAccountValue(accountId, accountSnapshot = accountSnapshot)
+        accountService.addAccountSnapshot(accountId, accountSnapshot = accountSnapshot)
         return ResponseEntity.noContent().build()
     }
 

@@ -6,6 +6,5 @@ import org.springframework.data.jpa.repository.Query
 
 interface DepositRepository : JpaRepository<Deposit, Long> {
 
-    @Query("select d from Deposit d where d.user.id = :userId")
-    fun findAllBelongingToUser(userId: Long): Set<Deposit>
+    fun findByUserId(userId: Long): Set<Deposit>
 }

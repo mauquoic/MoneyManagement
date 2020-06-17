@@ -11,7 +11,7 @@ class DepositService @Inject constructor(private val userRepository: UserReposit
                                          private val depositRepository: DepositRepository) {
 
     fun getDeposits(userId: Long): List<Deposit> {
-        return depositRepository.findAllBelongingToUser(userId).toList().sortedBy { it.id }
+        return depositRepository.findByUserId(userId).toList().sortedBy { it.id }
     }
 
     fun getDeposit(id: Long): Deposit {
