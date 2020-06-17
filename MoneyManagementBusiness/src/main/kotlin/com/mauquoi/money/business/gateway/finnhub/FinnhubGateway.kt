@@ -6,8 +6,8 @@ import com.mauquoi.money.business.gateway.Constants.Query.EXCHANGE
 import com.mauquoi.money.business.gateway.Constants.Query.SYMBOL
 import com.mauquoi.money.business.gateway.Constants.Query.TOKEN
 import com.mauquoi.money.model.dto.ExchangeDto
+import com.mauquoi.money.model.dto.FinnhubStockDto
 import com.mauquoi.money.model.dto.QuoteDto
-import com.mauquoi.money.model.dto.StockDto
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.core.ParameterizedTypeReference
@@ -40,7 +40,7 @@ class FinnhubGateway @Inject constructor(private val builder: RestTemplateBuilde
                 .queryParam(TOKEN, token)
                 .build()
                 .toUriString()
-        val stocks = restTemplate.exchange(url, HttpMethod.GET, null, object : ParameterizedTypeReference<List<StockDto>>() {}).body
+        val stocks = restTemplate.exchange(url, HttpMethod.GET, null, object : ParameterizedTypeReference<List<FinnhubStockDto>>() {}).body
                 ?: throw RuntimeException("Could not retrieve the exchange information")
         return ExchangeDto(stocks)
     }

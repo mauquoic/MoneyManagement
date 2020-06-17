@@ -4,8 +4,8 @@ import com.mauquoi.money.business.gateway.finnhub.FinnhubGateway
 import com.mauquoi.money.model.Dividend
 import com.mauquoi.money.model.Position
 import com.mauquoi.money.model.Stock
+import com.mauquoi.money.model.dto.FinnhubStockDto
 import com.mauquoi.money.model.dto.QuoteDto
-import com.mauquoi.money.model.dto.StockDto
 import com.mauquoi.money.repository.StockRepository
 import com.mauquoi.money.repository.UserRepository
 import org.springframework.stereotype.Service
@@ -36,6 +36,7 @@ class StockService @Inject constructor(private val userRepository: UserRepositor
                 symbol = stock.symbol,
                 currency = stock.currency,
                 description = stock.description,
+                market = stock.market,
                 positions = editPositions(savedStock.positions, stock.positions),
                 dividends = editDividends(savedStock.dividends, stock.dividends)
         )
@@ -60,6 +61,7 @@ class StockService @Inject constructor(private val userRepository: UserRepositor
 
     fun getTotalStocksValue(userId: Long): Float {
         val stocks = getStocks(userId)
+        stocks.forEach { it.value = finnhubGateway.getStockPrice(it.createSymbol()).current }
         return stocks.sumByDouble { it.calculateValue().toDouble() }.toFloat()
     }
 
@@ -67,12 +69,12 @@ class StockService @Inject constructor(private val userRepository: UserRepositor
         return finnhubGateway.getStockPrice(symbol)
     }
 
-    fun getStockName(symbol: String, exchange: String): StockDto {
+    fun getStockName(symbol: String, exchange: String): FinnhubStockDto {
         val exchangeDto = finnhubGateway.getExchange(exchange)
-        if (exchange != "US") {
-            return exchangeDto.stocks.first { it.symbol == "$symbol.$exchange" }
+        return if (exchange != "US") {
+            exchangeDto.stocks.first { it.symbol == "$symbol.$exchange" }
         } else {
-            return exchangeDto.stocks.first { it.symbol == symbol }
+            exchangeDto.stocks.first { it.symbol == symbol }
         }
     }
 }

@@ -1,9 +1,11 @@
 package com.mauquoi.money.business.util
 
-import com.mauquoi.money.model.Account
-import com.mauquoi.money.model.User
-import com.mauquoi.money.model.UserPreferences
+import com.mauquoi.money.model.*
 import com.mauquoi.money.model.audit.AccountSnapshot
+import com.mauquoi.money.model.dto.ExchangeDto
+import com.mauquoi.money.model.dto.FinnhubStockDto
+import com.mauquoi.money.model.dto.QuoteDto
+import java.time.Instant
 import java.time.LocalDate
 import java.util.*
 
@@ -40,5 +42,34 @@ object TestObjectCreator {
                 AccountSnapshot(id = 1L, account = account, amount = 250f, date = LocalDate.of(2020, 1, 1)),
                 AccountSnapshot(id = 2L, account = account, amount = 350f, date = LocalDate.of(2020, 3, 1))
         )
+    }
+
+    fun createStocks(): List<Stock> {
+        return listOf(
+                Stock(id = 1L, name = "Accenture", symbol = "ACN", market = "US", currency = Currency.getInstance("USD")),
+                Stock(id = 2L, name = "Geberit", symbol = "GEBN", market = "SW", currency = Currency.getInstance("CHF"),
+                        positions = listOf(createPosition()),
+                        dividends = listOf(createDividend()))
+        )
+    }
+
+    fun createQuoteDto(): QuoteDto {
+        return QuoteDto(open = 2F, previousClose = 1.8f, current = 1.9f, low = 1.7f, high = 2.1f, timeStamp = Instant.now())
+    }
+
+    fun createExchangeDto(): ExchangeDto {
+        return ExchangeDto(listOf(
+                FinnhubStockDto(description = "Accenture", symbol = "ACN", displaySymbol = "ACN"),
+                FinnhubStockDto(description = "Geberit", symbol = "GEBN.SW", displaySymbol = "GEBN.SW"),
+                FinnhubStockDto(description = "Swiss high dividends", symbol = "CHDVD.SW", displaySymbol = "CHDVD.SW")
+        ))
+    }
+
+    private fun createDividend(): Dividend {
+        return Dividend(id = 1L, totalAmount = 24.1f, date = LocalDate.of(2020, 4, 18))
+    }
+
+    private fun createPosition(): Position {
+        return Position(id = 1L, amount = 5, purchasePrice = 350.6f, fees = 20.4f, date = LocalDate.of(2020, 1, 15))
     }
 }

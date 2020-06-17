@@ -2,6 +2,7 @@ package com.mauquoi.money.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import java.time.LocalDate
+import java.util.*
 import javax.persistence.*
 import javax.validation.constraints.NotNull
 
@@ -14,23 +15,31 @@ data class Stock(
         @Column(name = "name", nullable = false) @NotNull val name: String,
         @Column(name = "symbol") @NotNull val symbol: String,
         @Column(name = "market") @NotNull val market: String,
-        @Column(name = "currency", nullable = false) @NotNull val currency: String,
+        @Column(name = "currency", nullable = false) @NotNull val currency: Currency,
         @OneToMany(cascade = [CascadeType.ALL]) val positions: List<Position> = emptyList(),
         @OneToMany(cascade = [CascadeType.ALL]) val dividends: List<Dividend> = emptyList(),
         @Column(name = "description") val description: String? = null,
-        @ManyToOne @JsonIgnore val user: User? = null
+        @ManyToOne @JsonIgnore val user: User? = null,
+        @Transient var value: Float = 0f
 ) {
     val totalValue = calculateValue()
     val totalCosts = calculateCosts()
     val totalReturn = calculateValue() + dividends.fold(0f) { acc, dividend -> acc + dividend.totalAmount }
 
-//    todo cleanup value
     fun calculateValue(): Float {
-        return positions.sumBy { it.amount }.times(0f)
+        return positions.sumBy { it.amount }.times(value)
     }
 
     fun calculateCosts(): Float {
         return positions.fold(0f) { acc, position -> acc + position.calculateCosts() }
+    }
+
+    fun createSymbol(): String {
+        return if (market != "US") {
+            "$symbol.$market"
+        } else {
+            symbol
+        }
     }
 }
 

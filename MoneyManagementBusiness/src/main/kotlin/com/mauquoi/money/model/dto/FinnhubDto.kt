@@ -10,8 +10,8 @@ data class QuoteDto(@set:JsonProperty("o") var open: Float,
                     @set:JsonProperty("pc") var previousClose: Float,
                     @set:JsonProperty("t") var timeStamp: Instant)
 
-data class ExchangeDto(val stocks: List<StockDto>)
+data class ExchangeDto(val stocks: List<FinnhubStockDto>)
 
-data class StockDto(val description: String,
-                    val displaySymbol: String,
-                    val symbol: String)
+data class FinnhubStockDto(val description: String,
+                           val displaySymbol: String,
+                           val symbol: String)
