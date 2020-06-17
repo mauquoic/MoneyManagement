@@ -2,6 +2,7 @@ package com.mauquoi.money.business.service
 
 import com.mauquoi.money.business.gateway.ecb.CurrencyConfiguration
 import com.mauquoi.money.business.gateway.ecb.EcbGateway
+import com.mauquoi.money.business.util.TestObjectCreator
 import com.mauquoi.money.model.dto.CurrencyLookupDto
 import io.mockk.clearAllMocks
 import io.mockk.every
@@ -25,7 +26,7 @@ internal class CurrencyServiceTest {
     @MockK
     lateinit var ecbGateway: EcbGateway
 
-    val capturedCurrency = slot<Currency>()
+    private val capturedCurrency = slot<Currency>()
 
     @BeforeEach
     fun setUp() {
@@ -36,10 +37,8 @@ internal class CurrencyServiceTest {
     @Test
     fun getRates() {
         val currency = Currency.getInstance("USD")
-        every { ecbGateway.getConversionValues(capture(capturedCurrency)) } returns CurrencyLookupDto(base = currency, date = LocalDate.now(), rates = mapOf(
-                Currency.getInstance("CHF") to 1.1f,
-                Currency.getInstance("EUR") to 0.9f
-        ))
+        every { ecbGateway.getConversionValues(capture(capturedCurrency)) } returns TestObjectCreator.createCurrencyLookupDto()
+
         val rates = currencyService.getRates(currency)
 
         assertAll(

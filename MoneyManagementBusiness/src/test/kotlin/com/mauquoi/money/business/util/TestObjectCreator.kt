@@ -2,6 +2,7 @@ package com.mauquoi.money.business.util
 
 import com.mauquoi.money.model.*
 import com.mauquoi.money.model.audit.AccountSnapshot
+import com.mauquoi.money.model.dto.CurrencyLookupDto
 import com.mauquoi.money.model.dto.ExchangeDto
 import com.mauquoi.money.model.dto.FinnhubStockDto
 import com.mauquoi.money.model.dto.QuoteDto
@@ -51,6 +52,14 @@ object TestObjectCreator {
                         positions = listOf(createPosition()),
                         dividends = listOf(createDividend()))
         )
+    }
+
+    fun createCurrencyLookupDto() : CurrencyLookupDto {
+        val currency = Currency.getInstance("USD")
+        return CurrencyLookupDto(base = currency, date = LocalDate.now(), rates = mapOf(
+                Currency.getInstance("CHF") to 1.1f,
+                Currency.getInstance("EUR") to 0.9f
+        ))
     }
 
     fun createQuoteDto(): QuoteDto {
