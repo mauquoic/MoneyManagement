@@ -38,7 +38,6 @@ internal class UserControllerTest {
     @BeforeEach
     fun setUp() {
         clearAllMocks()
-        MockKAnnotations.init(this)
     }
 
     @Test
