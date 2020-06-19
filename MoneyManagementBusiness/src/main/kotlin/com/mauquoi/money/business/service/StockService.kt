@@ -65,8 +65,8 @@ class StockService @Inject constructor(private val userRepository: UserRepositor
         return stocks.sumByDouble { it.calculateValue().toDouble() }.toFloat()
     }
 
-    fun getStockPrice(symbol: String): QuoteDto {
-        return finnhubGateway.getStockPrice(symbol)
+    fun getStockPrice(symbol: String): Float {
+        return finnhubGateway.getStockPrice(symbol).current
     }
 
     fun getStockName(symbol: String, exchange: String): FinnhubStockDto {

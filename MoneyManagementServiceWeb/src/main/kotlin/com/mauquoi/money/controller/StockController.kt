@@ -13,6 +13,7 @@ import com.mauquoi.money.const.URL.Stock.STOCK_QUOTE
 import com.mauquoi.money.model.Stock
 import com.mauquoi.money.model.dto.FinnhubStockDto
 import com.mauquoi.money.model.dto.QuoteDto
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import javax.inject.Inject
@@ -33,18 +34,19 @@ class StockController @Inject constructor(private val stockService: StockService
 
     @PutMapping(STOCKS_BY_ID)
     fun putStock(@PathVariable(STOCK_ID) id: Long,
-                 @RequestBody stock: Stock): ResponseEntity<Stock> {
-        return ResponseEntity.ok(stockService.editStock(id, stock))
+                 @RequestBody stock: Stock): ResponseEntity<Nothing> {
+        stockService.editStock(id, stock)
+        return ResponseEntity.noContent().build()
     }
 
     @PostMapping(STOCKS)
     fun addStock(@PathVariable(USER_ID) userId: Long,
                  @RequestBody stock: Stock): ResponseEntity<Stock> {
-        return ResponseEntity.ok(stockService.addStock(userId, stock))
+        return ResponseEntity.status(HttpStatus.CREATED).body(stockService.addStock(userId, stock))
     }
 
     @GetMapping(STOCK_QUOTE)
-    fun getStockValue(@PathVariable(STOCK_SYMBOL) symbol: String): ResponseEntity<QuoteDto> {
+    fun getStockValue(@PathVariable(STOCK_SYMBOL) symbol: String): ResponseEntity<Float> {
         return ResponseEntity.ok(stockService.getStockPrice(symbol))
     }
 
