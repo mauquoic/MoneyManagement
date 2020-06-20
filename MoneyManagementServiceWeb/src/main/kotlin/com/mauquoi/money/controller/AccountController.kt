@@ -13,6 +13,7 @@ import com.mauquoi.money.const.URL.PathVariable.USER_ID
 import com.mauquoi.money.model.Account
 import com.mauquoi.money.model.audit.AccountSnapshot
 import com.mauquoi.money.model.history.AccountHistory
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import javax.inject.Inject
@@ -29,7 +30,7 @@ class AccountController @Inject constructor(private val accountService: AccountS
     @PostMapping
     fun addAccount(@PathVariable(USER_ID) userId: Long,
                    @RequestBody account: Account): ResponseEntity<Account> {
-        return ResponseEntity.ok(accountService.addAccount(userId, account))
+        return ResponseEntity.status(HttpStatus.CREATED).body(accountService.addAccount(userId, account))
     }
 
     @GetMapping(ACCOUNT_BY_ID)
@@ -41,10 +42,11 @@ class AccountController @Inject constructor(private val accountService: AccountS
     @PutMapping(ACCOUNT_BY_ID)
     fun editAccount(@PathVariable(ACCOUNT_ID) accountId: Long,
                     @RequestBody account: Account): ResponseEntity<Account> {
-        return ResponseEntity.ok(accountService.editAccount(accountId, account))
+        accountService.editAccount(accountId, account)
+        return ResponseEntity.noContent().build()
     }
 
-    @PutMapping(UPDATE_ACCOUNT)
+    @PostMapping(UPDATE_ACCOUNT)
     fun updateAccount(@PathVariable(ACCOUNT_ID) accountId: Long,
                       @RequestParam(name = "amount", required = true) amount: Float): ResponseEntity<Nothing> {
         accountService.updateAccountValue(accountId, amount)
@@ -55,7 +57,7 @@ class AccountController @Inject constructor(private val accountService: AccountS
     fun addAccountAudit(@PathVariable(ACCOUNT_ID) accountId: Long,
                         @RequestBody accountSnapshot: AccountSnapshot): ResponseEntity<Nothing> {
         accountService.addAccountSnapshot(accountId, accountSnapshot = accountSnapshot)
-        return ResponseEntity.noContent().build()
+        return ResponseEntity.status(HttpStatus.CREATED).build()
     }
 
     @PutMapping(EDIT_ACCOUNT_AUDIT)
