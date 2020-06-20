@@ -19,6 +19,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
 import org.junit.jupiter.api.extension.ExtendWith
+import java.time.LocalDate
 import java.util.*
 
 @ExtendWith(MockKExtension::class)
@@ -59,7 +60,10 @@ internal class StockServiceTest {
         assertAll(
                 { assertThat(capturedUserId.captured, `is`(1L)) },
                 { assertThat(stocks[0].id, `is`(1L)) },
-                { assertThat(stocks[1].id, `is`(2L)) }
+                { assertThat(stocks[1].id, `is`(2L)) },
+                { assertThat(stocks[0].positions.size, `is`(0)) },
+                { assertThat(stocks[1].positions[0].id, `is`(1L)) },
+                { assertThat(stocks[1].positions[0].fees, `is`(20.4f)) }
         )
     }
 
@@ -110,6 +114,49 @@ internal class StockServiceTest {
                 { assertThat(capturedStock.captured.dividends.size, `is`(1)) },
                 { assertThat(capturedStock.captured.positions.size, `is`(1)) },
                 { assertThat(capturedStock.captured.currency.currencyCode, `is`("CHF")) }
+        )
+    }
+
+    @Test
+    fun editStock_withNewPosition_oldPositionsRemainUnchanged() {
+        val oldStock = Stock(id = 10L, name = "Stock", symbol = "SYM", market = "SW", currency = Currency.getInstance("CHF"),
+                positions = listOf(
+                        Position(id = 1L, amount = 5, purchasePrice = 10f, fees = 2f, date = LocalDate.of(2020, 1, 15)),
+                        Position(id = 2L, amount = 6, purchasePrice = 20f, date = LocalDate.of(2020, 1, 19))
+                ),
+                dividends = listOf(
+                        Dividend(id = 1L, totalAmount = 6f, date = LocalDate.of(2020, 4, 18)),
+                        Dividend(id = 2L, totalAmount = 7f, date = LocalDate.of(2020, 6, 18))
+                )
+        )
+        val newStock = Stock(id = 10L, name = "Stock", symbol = "SYM", market = "SW", currency = Currency.getInstance("CHF"),
+                positions = listOf(
+                        Position(id = 1L, amount = 5, purchasePrice = 10f, fees = 2f, date = LocalDate.of(2020, 1, 15)),
+                        Position(amount = 10, purchasePrice = 30f, fees = 10f, date = LocalDate.of(2020, 5, 19))
+                ),
+                dividends = listOf(
+                        Dividend(id = 1L, totalAmount = 8f, date = LocalDate.of(2020, 4, 18)),
+                        Dividend(totalAmount = 25f, date = LocalDate.of(2020, 9, 18))
+                )
+        )
+        every { stockRepository.findById(capture(capturedStockId)) } returns Optional.of(oldStock)
+        every { stockRepository.save(capture(capturedStock)) } returns newStock
+
+        stockService.editStock(10L, newStock)
+
+        assertAll(
+                { assertThat(capturedStockId.captured, `is`(10L)) },
+                { assertThat(capturedStock.captured.id, `is`(10L)) },
+                { assertThat(capturedStock.captured.positions.size, `is`(2)) },
+                { assertThat(capturedStock.captured.positions[0].id, `is`(1L)) },
+                { assertThat(capturedStock.captured.positions[1].id, `is`(nullValue())) },
+                { assertThat(capturedStock.captured.positions[0].amount, `is`(5)) },
+                { assertThat(capturedStock.captured.positions[1].fees, `is`(10f)) },
+                { assertThat(capturedStock.captured.dividends.size, `is`(2)) },
+                { assertThat(capturedStock.captured.dividends[0].id, `is`(1L)) },
+                { assertThat(capturedStock.captured.dividends[1].id, `is`(nullValue())) },
+                { assertThat(capturedStock.captured.dividends[0].totalAmount, `is`(8f)) },
+                { assertThat(capturedStock.captured.dividends[1].date, `is`(LocalDate.of(2020, 9, 18))) }
         )
     }
 

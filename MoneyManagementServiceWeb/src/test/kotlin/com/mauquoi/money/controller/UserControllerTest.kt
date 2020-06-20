@@ -1,6 +1,7 @@
 package com.mauquoi.money.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.mauquoi.money.business.service.UserService
 import com.mauquoi.money.model.UserPreferences
 import com.ninjasquad.springmockk.MockkBean
@@ -33,7 +34,7 @@ internal class UserControllerTest {
 
     private val capturedUserId = slot<Long>()
     private val capturedPreferences = slot<UserPreferences>()
-    private val objectMapper: ObjectMapper = ObjectMapper()
+    private val objectMapper: ObjectMapper = jacksonObjectMapper()
 
     @BeforeEach
     fun setUp() {
