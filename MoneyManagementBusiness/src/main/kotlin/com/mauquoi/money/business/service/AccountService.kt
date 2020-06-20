@@ -25,13 +25,13 @@ class AccountService @Inject constructor(private val userRepository: UserReposit
         return accountRepository.save(account)
     }
 
-    fun editAccount(id: Long, account: Account): Account {
+    fun editAccount(id: Long, account: Account) {
         val savedAccount = getAccount(id)
         val editedAccount = savedAccount.copy(name = account.name,
                 currency = account.currency,
                 amount = account.amount,
                 description = account.description)
-        return accountRepository.save(editedAccount)
+        accountRepository.save(editedAccount)
     }
 
     fun addAccountSnapshot(accountId: Long, accountSnapshot: AccountSnapshot) {
