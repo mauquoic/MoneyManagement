@@ -7,9 +7,6 @@ import java.time.LocalDate
 
 interface AccountAuditRepository : JpaRepository<AccountSnapshot, Long> {
 
-//    @Query("select a from AccountSnapshot a where a.account.id = :accountId")
-//    fun getAuditsForAccount(accountId: Long): Set<AccountSnapshot>
-
     fun findByAccountId(accountId: Long): Set<AccountSnapshot>
 
     @Query("select max(a.date) from AccountSnapshot a where a.account.id = :accountId")
