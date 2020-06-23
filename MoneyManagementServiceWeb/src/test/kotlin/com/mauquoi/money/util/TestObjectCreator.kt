@@ -2,6 +2,7 @@ package com.mauquoi.money.util
 
 import com.mauquoi.money.model.*
 import com.mauquoi.money.model.audit.AccountSnapshot
+import com.mauquoi.money.model.audit.DepositSnapshot
 import com.mauquoi.money.model.dto.CurrencyLookupDto
 import com.mauquoi.money.model.dto.ExchangeDto
 import com.mauquoi.money.model.dto.FinnhubStockDto
@@ -54,7 +55,7 @@ object TestObjectCreator {
         )
     }
 
-    fun createCurrencyLookupDto() : CurrencyLookupDto {
+    fun createCurrencyLookupDto(): CurrencyLookupDto {
         val currency = Currency.getInstance("USD")
         return CurrencyLookupDto(base = currency, date = LocalDate.now(), rates = mapOf(
                 Currency.getInstance("CHF") to 1.1f,
@@ -80,5 +81,32 @@ object TestObjectCreator {
 
     private fun createPosition(): Position {
         return Position(id = 1L, amount = 5, purchasePrice = 350.6f, fees = 20.4f, date = LocalDate.of(2020, 1, 15))
+    }
+
+    fun createDeposit(): Deposit {
+        return createDeposits()[0]
+    }
+
+    fun createDeposits(): List<Deposit> {
+        return listOf(
+                Deposit(id = 1L, name = "Deposit", currency = Currency.getInstance("CHF"), description = "Description", amount = 100F),
+                Deposit(id = 2L, name = "2ndDeposit", currency = Currency.getInstance("EUR"), description = "2ndDescription", amount = 200F)
+        )
+    }
+
+    fun createDepositSnapshot(): DepositSnapshot {
+        return createDepositSnapshots()[0]
+    }
+
+    fun createDepositSnapshotWithoutDeposit(): DepositSnapshot {
+        return DepositSnapshot(amount = 250f, deposit = null, date = LocalDate.of(2020, 1, 1))
+    }
+
+    fun createDepositSnapshots(): List<DepositSnapshot> {
+        val deposit = createDeposit()
+        return listOf(
+                DepositSnapshot(id = 1L, deposit = deposit, amount = 250f, date = LocalDate.of(2020, 1, 1)),
+                DepositSnapshot(id = 2L, deposit = deposit, amount = 350f, date = LocalDate.of(2020, 3, 1))
+        )
     }
 }

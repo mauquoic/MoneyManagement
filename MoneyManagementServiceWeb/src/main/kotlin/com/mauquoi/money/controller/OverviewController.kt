@@ -24,7 +24,7 @@ class OverviewController @Inject constructor(private val stockService: StockServ
     fun getOverview(@PathVariable("userId") userId: Long): ResponseEntity<Overview> {
         val overview = Overview(cash = accountService.getTotalAccountValue(userId).toInt(),
                 assets = stockService.getTotalStocksValue(userId).toInt(),
-                deposits = depositService.getTotalDepositsValue(userId),
+                deposits = depositService.getTotalDepositsValue(userId).toInt(),
                 cryptos = 0)
         return ResponseEntity.ok(overview)
     }
