@@ -1,5 +1,6 @@
 package com.mauquoi.money.business.service
 
+import com.mauquoi.money.business.error.DepositNotFoundException
 import com.mauquoi.money.business.util.TestObjectCreator
 import com.mauquoi.money.model.Deposit
 import com.mauquoi.money.model.User
@@ -17,7 +18,7 @@ import org.hamcrest.CoreMatchers
 import org.hamcrest.MatcherAssert
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import java.time.LocalDate
 import java.util.*
@@ -60,6 +61,15 @@ internal class DepositServiceTest {
                 { MatcherAssert.assertThat(deposits[0].id, CoreMatchers.`is`(1L)) },
                 { MatcherAssert.assertThat(capturedUserId.captured, CoreMatchers.`is`(1L)) }
         )
+    }
+
+    @Test
+    fun getAccount_depositDoesNotExist_errorThrown() {
+        every { depositRepository.findById(any()) } returns Optional.empty()
+
+        val err = assertThrows<DepositNotFoundException> { depositService.getDeposit(1L) }
+
+        MatcherAssert.assertThat(err.localizedMessage, CoreMatchers.`is`("No deposit could be found by that ID."))
     }
 
     @Test

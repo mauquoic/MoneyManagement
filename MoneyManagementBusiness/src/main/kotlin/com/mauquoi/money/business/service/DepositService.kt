@@ -1,5 +1,6 @@
 package com.mauquoi.money.business.service
 
+import com.mauquoi.money.business.error.DepositNotFoundException
 import com.mauquoi.money.model.Deposit
 import com.mauquoi.money.model.audit.DepositSnapshot
 import com.mauquoi.money.model.history.DepositHistory
@@ -20,7 +21,7 @@ class DepositService @Inject constructor(private val userRepository: UserReposit
     }
 
     fun getDeposit(id: Long): Deposit {
-        return depositRepository.findById(id).get()
+        return depositRepository.findById(id).orElseThrow { DepositNotFoundException() }
     }
 
     fun addDeposit(userId: Long, depositDto: Deposit): Deposit {

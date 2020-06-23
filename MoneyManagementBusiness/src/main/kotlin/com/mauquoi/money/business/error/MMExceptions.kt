@@ -8,16 +8,13 @@ import org.springframework.web.bind.annotation.ResponseStatus
  */
 
 @ResponseStatus(value = HttpStatus.NOT_FOUND)
-class NotFoundException : RuntimeException("Nobody could be found by that ID.")
+class UserNotFoundException : RuntimeException("Nobody could be found by that ID.")
 
-@ResponseStatus(value = HttpStatus.PRECONDITION_FAILED)
-class StatusAlreadyOccupiedException : RuntimeException("This user already has this role.")
+@ResponseStatus(value = HttpStatus.NOT_FOUND)
+class AccountNotFoundException : RuntimeException("No account could be found by that ID.")
 
-@ResponseStatus(value = HttpStatus.CONFLICT)
-class EmailAlreadyUsedException : RuntimeException("This email already has an account here.")
+@ResponseStatus(value = HttpStatus.NOT_FOUND)
+class DepositNotFoundException : RuntimeException("No deposit could be found by that ID.")
 
-@ResponseStatus(value = HttpStatus.UNAUTHORIZED)
-class IncorrectCredentialsException : RuntimeException("The email or password are incorrect.")
-
-@ResponseStatus(value = HttpStatus.UNAUTHORIZED)
-class IncorrectCodeException : RuntimeException("The email or verification code are incorrect.")
+@ResponseStatus(value = HttpStatus.NOT_FOUND)
+class StockNotFoundException : RuntimeException("No stock could be found by that ID.")

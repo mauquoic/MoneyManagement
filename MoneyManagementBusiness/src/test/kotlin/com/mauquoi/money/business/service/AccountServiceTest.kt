@@ -1,5 +1,6 @@
 package com.mauquoi.money.business.service
 
+import com.mauquoi.money.business.error.AccountNotFoundException
 import com.mauquoi.money.business.util.TestObjectCreator
 import com.mauquoi.money.model.Account
 import com.mauquoi.money.model.User
@@ -19,6 +20,7 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import java.time.LocalDate
 import java.util.*
@@ -61,6 +63,15 @@ internal class AccountServiceTest {
                 { assertThat(accounts[0].id, `is`(1L)) },
                 { assertThat(capturedUserId.captured, `is`(1L)) }
         )
+    }
+
+    @Test
+    fun getAccount_accountDoesNotExist_errorThrown() {
+        every { accountRepository.findById(any()) } returns Optional.empty()
+
+        val err = assertThrows<AccountNotFoundException> { accountService.getAccount(1L) }
+
+        assertThat(err.localizedMessage, `is`("No account could be found by that ID."))
     }
 
     @Test

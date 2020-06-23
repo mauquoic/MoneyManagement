@@ -1,5 +1,6 @@
 package com.mauquoi.money.business.service
 
+import com.mauquoi.money.business.error.AccountNotFoundException
 import com.mauquoi.money.model.Account
 import com.mauquoi.money.model.audit.AccountSnapshot
 import com.mauquoi.money.model.history.AccountHistory
@@ -58,7 +59,7 @@ class AccountService @Inject constructor(private val userRepository: UserReposit
     }
 
     fun getAccount(id: Long): Account {
-        return accountRepository.findById(id).get()
+        return accountRepository.findById(id).orElseThrow {AccountNotFoundException()}
     }
 
 //    todo view how to do this with different currencies

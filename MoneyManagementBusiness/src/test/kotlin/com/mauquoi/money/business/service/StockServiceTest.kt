@@ -1,5 +1,6 @@
 package com.mauquoi.money.business.service
 
+import com.mauquoi.money.business.error.StockNotFoundException
 import com.mauquoi.money.business.gateway.finnhub.FinnhubGateway
 import com.mauquoi.money.business.util.TestObjectCreator
 import com.mauquoi.money.model.Dividend
@@ -12,12 +13,14 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.slot
+import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.Is.`is`
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import java.time.LocalDate
 import java.util.*
@@ -158,6 +161,16 @@ internal class StockServiceTest {
                 { assertThat(capturedStock.captured.dividends[0].totalAmount, `is`(8f)) },
                 { assertThat(capturedStock.captured.dividends[1].date, `is`(LocalDate.of(2020, 9, 18))) }
         )
+    }
+
+
+    @Test
+    fun getAccount_stockDoesNotExist_errorThrown() {
+        every { stockRepository.findById(any()) } returns Optional.empty()
+
+        val err = assertThrows<StockNotFoundException> { stockService.getStock(1L) }
+
+        assertThat(err.localizedMessage, CoreMatchers.`is`("No stock could be found by that ID."))
     }
 
     @Test

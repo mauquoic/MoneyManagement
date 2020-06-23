@@ -1,11 +1,11 @@
 package com.mauquoi.money.business.service
 
+import com.mauquoi.money.business.error.StockNotFoundException
 import com.mauquoi.money.business.gateway.finnhub.FinnhubGateway
 import com.mauquoi.money.model.Dividend
 import com.mauquoi.money.model.Position
 import com.mauquoi.money.model.Stock
 import com.mauquoi.money.model.dto.FinnhubStockDto
-import com.mauquoi.money.model.dto.QuoteDto
 import com.mauquoi.money.repository.StockRepository
 import com.mauquoi.money.repository.UserRepository
 import org.springframework.stereotype.Service
@@ -21,7 +21,7 @@ class StockService @Inject constructor(private val userRepository: UserRepositor
     }
 
     fun getStock(id: Long): Stock {
-        return stockRepository.findById(id).get()
+        return stockRepository.findById(id).orElseThrow{ StockNotFoundException() }
     }
 
     fun addStock(userId: Long, stockDto: Stock): Stock {
@@ -31,7 +31,7 @@ class StockService @Inject constructor(private val userRepository: UserRepositor
     }
 
     fun editStock(id: Long, stock: Stock): Stock {
-        val savedStock = stockRepository.findById(id).get()
+        val savedStock = getStock(id)
         val editedStock = savedStock.copy(name = stock.name,
                 symbol = stock.symbol,
                 currency = stock.currency,
