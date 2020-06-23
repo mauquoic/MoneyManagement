@@ -4,10 +4,9 @@ import com.mauquoi.money.business.util.TestObjectCreator
 import com.mauquoi.money.model.Account
 import com.mauquoi.money.model.User
 import com.mauquoi.money.model.audit.AccountSnapshot
-import com.mauquoi.money.model.history.AccountHistory
 import com.mauquoi.money.repository.AccountRepository
 import com.mauquoi.money.repository.UserRepository
-import com.mauquoi.money.repository.audit.AccountAuditRepository
+import com.mauquoi.money.repository.snapshot.AccountSnapshotRepository
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -31,7 +30,7 @@ internal class AccountServiceTest {
     lateinit var userRepository: UserRepository
 
     @MockK
-    lateinit var accountAuditRepository: AccountAuditRepository
+    lateinit var accountAuditRepository: AccountSnapshotRepository
 
     @MockK
     lateinit var accountRepository: AccountRepository

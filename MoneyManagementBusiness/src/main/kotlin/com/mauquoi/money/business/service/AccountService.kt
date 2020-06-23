@@ -5,7 +5,7 @@ import com.mauquoi.money.model.audit.AccountSnapshot
 import com.mauquoi.money.model.history.AccountHistory
 import com.mauquoi.money.repository.AccountRepository
 import com.mauquoi.money.repository.UserRepository
-import com.mauquoi.money.repository.audit.AccountAuditRepository
+import com.mauquoi.money.repository.snapshot.AccountSnapshotRepository
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import javax.inject.Inject
@@ -13,7 +13,7 @@ import javax.inject.Inject
 @Service
 class AccountService @Inject constructor(private val userRepository: UserRepository,
                                          private val accountRepository: AccountRepository,
-                                         private val accountAuditRepository: AccountAuditRepository) {
+                                         private val accountAuditRepository: AccountSnapshotRepository) {
 
     fun getAccounts(userId: Long): List<Account> {
         return accountRepository.findByUserId(userId).toList().sortedBy { it.id }
@@ -54,7 +54,7 @@ class AccountService @Inject constructor(private val userRepository: UserReposit
     }
 
     private fun getLatestAuditForAccount(accountId: Long): LocalDate? {
-        return accountAuditRepository.getLatestAuditForAccount(accountId)
+        return accountAuditRepository.getLatestSnapshotForAccount(accountId)
     }
 
     fun getAccount(id: Long): Account {
