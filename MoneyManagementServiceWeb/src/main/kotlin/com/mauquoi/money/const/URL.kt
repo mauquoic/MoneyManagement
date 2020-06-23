@@ -2,6 +2,7 @@ package com.mauquoi.money.const
 
 import com.mauquoi.money.const.URL.PathVariable.ACCOUNT_ID
 import com.mauquoi.money.const.URL.PathVariable.AUDIT_ID
+import com.mauquoi.money.const.URL.PathVariable.DEPOSIT_ID
 import com.mauquoi.money.const.URL.PathVariable.MARKET
 import com.mauquoi.money.const.URL.PathVariable.STOCK_ID
 import com.mauquoi.money.const.URL.PathVariable.STOCK_SYMBOL
@@ -19,6 +20,15 @@ object URL {
         const val GET_ACCOUNT_HISTORY = "/{$ACCOUNT_ID}/history"
         const val ADD_ACCOUNT_AUDIT = "/{$ACCOUNT_ID}/audits"
         const val EDIT_ACCOUNT_AUDIT = "/{$ACCOUNT_ID}/audits/{$AUDIT_ID}"
+    }
+
+    object Deposit {
+        const val BASE = "$USER_BASE/{$USER_ID}/deposits"
+        const val DEPOSIT_BY_ID = "/{$DEPOSIT_ID}"
+        const val UPDATE_DEPOSIT = "/{$DEPOSIT_ID}/update"
+        const val GET_DEPOSIT_HISTORY = "/{$DEPOSIT_ID}/history"
+        const val ADD_DEPOSIT_AUDIT = "/{$DEPOSIT_ID}/audits"
+        const val EDIT_DEPOSIT_AUDIT = "/{$DEPOSIT_ID}/audits/{$AUDIT_ID}"
     }
 
     object Currency {
@@ -43,6 +53,7 @@ object URL {
         const val USER_ID = "userId"
         const val STOCK_ID = "stockId"
         const val ACCOUNT_ID = "accountId"
+        const val DEPOSIT_ID = "depositId"
         const val AUDIT_ID = "auditId"
         const val STOCK_SYMBOL = "symbol"
         const val MARKET = "market"
