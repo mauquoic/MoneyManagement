@@ -17,8 +17,7 @@ data class StockPosition(
         @OneToMany(cascade = [CascadeType.ALL]) val dividends: List<Dividend> = emptyList(),
         @Column(name = "description") val description: String? = null,
         @ManyToOne @JsonIgnore
-        val user: User? = null,
-        @Transient var value: Double = 5.0
+        val user: User? = null
 ) : ValueItem, CurrencyItem {
 
     override fun currency(): Currency {
@@ -33,7 +32,7 @@ data class StockPosition(
     val totalReturn = calculateValue() + dividends.fold(0.0) { acc, dividend -> acc + dividend.totalAmount }
 
     fun calculateValue(): Double {
-        return positions.sumBy { it.amount }.times(value)
+        return positions.sumBy { it.amount }.times(stock.value)
     }
 
     fun calculateCosts(): Double {
