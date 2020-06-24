@@ -43,7 +43,7 @@ class AccountService @Inject constructor(private val userRepository: UserReposit
         accountAuditRepository.save(new)
     }
 
-    fun updateAccountValue(accountId: Long, amount: Float) {
+    fun updateAccountValue(accountId: Long, amount: Double) {
         val account = getAccount(accountId)
         val new = AccountSnapshot(account = account,
                 amount = amount,
@@ -63,8 +63,8 @@ class AccountService @Inject constructor(private val userRepository: UserReposit
     }
 
 //    todo view how to do this with different currencies
-    fun getTotalAccountValue(userId: Long): Float {
-        return getAccounts(userId).sumByDouble { it.amount.toDouble() }.toFloat()
+    fun getTotalAccountValue(userId: Long): Double {
+        return getAccounts(userId).sumByDouble { it.amount }
     }
 
     fun editAudit(auditId: Long, accountSnapshot: AccountSnapshot) {

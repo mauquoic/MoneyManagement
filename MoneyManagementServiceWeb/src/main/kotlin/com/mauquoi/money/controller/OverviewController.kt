@@ -26,14 +26,22 @@ class OverviewController @Inject constructor(private val stockService: StockServ
 
     @GetMapping
     fun getOverview(@PathVariable("userId") userId: Long): ResponseEntity<Any> {
-        val preferredCurrency = userService.getUser(userId).preferences?.currency ?: throw PreferredCurrencyUnknownException()
-        val stocks = stockService.getStocks(userId)
-        val overviewItem = currencyService.createOverviewItem(stocks, preferredCurrency)
+        val preferredCurrency = userService.getUser(userId).preferences?.currency
+                ?: throw PreferredCurrencyUnknownException()
+        val stocks =
+                stockService.getStockPositions(userId)
+
+        val accounts =
+                accountService.getAccounts(userId)
+
+        val stockOverview = currencyService.createOverviewItem(stocks, preferredCurrency)
+        val accountOverview = currencyService.createAccountOverviewItem(accounts, preferredCurrency)
+
 //        val overview = Overview(cash = accountService.getTotalAccountValue(userId).toInt(),
 //                assets = stockService.getTotalStocksValue(userId).toInt(),
 //                deposits = depositService.getTotalDepositsValue(userId).toInt(),
 //                cryptos = 0)
-        return ResponseEntity.ok(overviewItem)
+        return ResponseEntity.ok(mapOf("stocks" to stockOverview, "accounts" to accountOverview))
     }
 
 }

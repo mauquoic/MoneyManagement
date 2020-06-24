@@ -87,7 +87,7 @@ internal class AccountServiceTest {
                 { assertThat(capturedUserId.captured, `is`(1L)) },
                 { assertThat(capturedAccount.captured.id, `is`(nullValue())) },
                 { assertThat(capturedAccount.captured.user!!.id, `is`(1L)) },
-                { assertThat(capturedAccount.captured.amount, `is`(100F)) },
+                { assertThat(capturedAccount.captured.amount, `is`(100.0)) },
                 { assertThat(capturedAccount.captured.currency.currencyCode, `is`("CHF")) },
                 { assertThat(capturedAccount.captured.description, `is`("Description")) },
                 { assertThat(capturedAccount.captured.name, `is`("Account")) }
@@ -104,7 +104,7 @@ internal class AccountServiceTest {
         assertAll(
                 { assertThat(capturedAccountId.captured, `is`(1L)) },
                 { assertThat(capturedAccount.captured.id, `is`(1L)) },
-                { assertThat(capturedAccount.captured.amount, `is`(200F)) },
+                { assertThat(capturedAccount.captured.amount, `is`(200.0)) },
                 { assertThat(capturedAccount.captured.currency.currencyCode, `is`("EUR")) },
                 { assertThat(capturedAccount.captured.description, `is`("2ndDescription")) },
                 { assertThat(capturedAccount.captured.name, `is`("2ndAccount")) }
@@ -124,7 +124,7 @@ internal class AccountServiceTest {
                 { assertThat(capturedAccountId.captured, `is`(1L)) },
                 { assertThat(capturedAccountSnapshot.captured.id, `is`(nullValue())) },
                 { assertThat(capturedAccountSnapshot.captured.account!!.id, `is`(1L)) },
-                { assertThat(capturedAccountSnapshot.captured.amount, `is`(250f)) }
+                { assertThat(capturedAccountSnapshot.captured.amount, `is`(250.0)) }
         )
     }
 
@@ -134,7 +134,7 @@ internal class AccountServiceTest {
         every { accountAuditRepository.save(capture(capturedAccountSnapshot)) } returns TestObjectCreator.createAccountSnapshot()
         every { accountRepository.save(capture(capturedAccount)) } returns TestObjectCreator.createAccount()
 
-        accountService.updateAccountValue(1L, amount = 550f)
+        accountService.updateAccountValue(1L, amount = 550.0)
 
         verify(exactly = 1) { accountRepository.save<Account>(any()) }
 
@@ -142,8 +142,8 @@ internal class AccountServiceTest {
                 { assertThat(capturedAccountId.captured, `is`(1L)) },
                 { assertThat(capturedAccountSnapshot.captured.id, `is`(nullValue())) },
                 { assertThat(capturedAccountSnapshot.captured.account!!.id, `is`(1L)) },
-                { assertThat(capturedAccountSnapshot.captured.amount, `is`(550f)) },
-                { assertThat(capturedAccount.captured.amount, `is`(550f)) }
+                { assertThat(capturedAccountSnapshot.captured.amount, `is`(550.0)) },
+                { assertThat(capturedAccount.captured.amount, `is`(550.0)) }
         )
     }
 
@@ -170,7 +170,7 @@ internal class AccountServiceTest {
                 { assertThat(capturedAuditId.captured, `is`(1L)) },
                 { assertThat(capturedAccountSnapshot.captured.id, `is`(1L)) },
                 { assertThat(capturedAccountSnapshot.captured.account!!.id, `is`(1L)) },
-                { assertThat(capturedAccountSnapshot.captured.amount, `is`(350f)) },
+                { assertThat(capturedAccountSnapshot.captured.amount, `is`(350.0)) },
                 { assertThat(capturedAccountSnapshot.captured.date, `is`(LocalDate.of(2020, 3, 1))) }
         )
     }
@@ -187,7 +187,7 @@ internal class AccountServiceTest {
                 { assertThat(capturedAuditId.captured, `is`(1L)) },
                 { assertThat(history.history.size, `is`(2)) },
                 { assertThat(history.current.id, `is`(1L)) },
-                { assertThat(history.current.amount, `is`(100f)) }
+                { assertThat(history.current.amount, `is`(100.0)) }
         )
     }
 

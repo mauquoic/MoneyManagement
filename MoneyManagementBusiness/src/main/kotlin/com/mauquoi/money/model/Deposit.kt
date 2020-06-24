@@ -11,8 +11,16 @@ data class Deposit(@Id
                    @GeneratedValue(strategy = GenerationType.IDENTITY)
                    var id: Long? = null,
                    @Column(name = "name", nullable = false) @NotNull val name: String,
-                   @Column(name = "amount", nullable = false) @NotNull val amount: Float,
+                   @Column(name = "amount", nullable = false) @NotNull val amount: Double,
                    @Column(name = "currency", nullable = false) @NotNull val currency: Currency,
                    @Column(name = "description") val description: String? = null,
                    @ManyToOne @JsonIgnore val user: User? = null
-)
+) : ValueItem {
+    override fun currency(): Currency {
+        return currency
+    }
+
+    override fun value(): Double {
+        return amount
+    }
+}

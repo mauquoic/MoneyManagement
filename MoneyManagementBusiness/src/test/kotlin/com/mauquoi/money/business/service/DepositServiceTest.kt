@@ -85,7 +85,7 @@ internal class DepositServiceTest {
                 { MatcherAssert.assertThat(capturedUserId.captured, CoreMatchers.`is`(1L)) },
                 { MatcherAssert.assertThat(capturedDeposit.captured.id, CoreMatchers.`is`(CoreMatchers.nullValue())) },
                 { MatcherAssert.assertThat(capturedDeposit.captured.user!!.id, CoreMatchers.`is`(1L)) },
-                { MatcherAssert.assertThat(capturedDeposit.captured.amount, CoreMatchers.`is`(100F)) },
+                { MatcherAssert.assertThat(capturedDeposit.captured.amount, CoreMatchers.`is`(100.0)) },
                 { MatcherAssert.assertThat(capturedDeposit.captured.currency.currencyCode, CoreMatchers.`is`("CHF")) },
                 { MatcherAssert.assertThat(capturedDeposit.captured.description, CoreMatchers.`is`("Description")) },
                 { MatcherAssert.assertThat(capturedDeposit.captured.name, CoreMatchers.`is`("Deposit")) }
@@ -102,7 +102,7 @@ internal class DepositServiceTest {
         org.junit.jupiter.api.assertAll(
                 { MatcherAssert.assertThat(capturedDepositId.captured, CoreMatchers.`is`(1L)) },
                 { MatcherAssert.assertThat(capturedDeposit.captured.id, CoreMatchers.`is`(1L)) },
-                { MatcherAssert.assertThat(capturedDeposit.captured.amount, CoreMatchers.`is`(200F)) },
+                { MatcherAssert.assertThat(capturedDeposit.captured.amount, CoreMatchers.`is`(200.0)) },
                 { MatcherAssert.assertThat(capturedDeposit.captured.currency.currencyCode, CoreMatchers.`is`("EUR")) },
                 { MatcherAssert.assertThat(capturedDeposit.captured.description, CoreMatchers.`is`("2ndDescription")) },
                 { MatcherAssert.assertThat(capturedDeposit.captured.name, CoreMatchers.`is`("2ndDeposit")) }
@@ -122,7 +122,7 @@ internal class DepositServiceTest {
                 { MatcherAssert.assertThat(capturedDepositId.captured, CoreMatchers.`is`(1L)) },
                 { MatcherAssert.assertThat(capturedDepositSnapshot.captured.id, CoreMatchers.`is`(CoreMatchers.nullValue())) },
                 { MatcherAssert.assertThat(capturedDepositSnapshot.captured.deposit!!.id, CoreMatchers.`is`(1L)) },
-                { MatcherAssert.assertThat(capturedDepositSnapshot.captured.amount, CoreMatchers.`is`(250f)) }
+                { MatcherAssert.assertThat(capturedDepositSnapshot.captured.amount, CoreMatchers.`is`(250.0)) }
         )
     }
 
@@ -132,7 +132,7 @@ internal class DepositServiceTest {
         every { depositSnapshotRepository.save(capture(capturedDepositSnapshot)) } returns TestObjectCreator.createDepositSnapshot()
         every { depositRepository.save(capture(capturedDeposit)) } returns TestObjectCreator.createDeposit()
 
-        depositService.updateDepositValue(1L, amount = 550f)
+        depositService.updateDepositValue(1L, amount = 550.0)
 
         verify(exactly = 1) { depositRepository.save<Deposit>(any()) }
 
@@ -140,8 +140,8 @@ internal class DepositServiceTest {
                 { MatcherAssert.assertThat(capturedDepositId.captured, CoreMatchers.`is`(1L)) },
                 { MatcherAssert.assertThat(capturedDepositSnapshot.captured.id, CoreMatchers.`is`(CoreMatchers.nullValue())) },
                 { MatcherAssert.assertThat(capturedDepositSnapshot.captured.deposit!!.id, CoreMatchers.`is`(1L)) },
-                { MatcherAssert.assertThat(capturedDepositSnapshot.captured.amount, CoreMatchers.`is`(550f)) },
-                { MatcherAssert.assertThat(capturedDeposit.captured.amount, CoreMatchers.`is`(550f)) }
+                { MatcherAssert.assertThat(capturedDepositSnapshot.captured.amount, CoreMatchers.`is`(550.0)) },
+                { MatcherAssert.assertThat(capturedDeposit.captured.amount, CoreMatchers.`is`(550.0)) }
         )
     }
 
@@ -168,7 +168,7 @@ internal class DepositServiceTest {
                 { MatcherAssert.assertThat(capturedAuditId.captured, CoreMatchers.`is`(1L)) },
                 { MatcherAssert.assertThat(capturedDepositSnapshot.captured.id, CoreMatchers.`is`(1L)) },
                 { MatcherAssert.assertThat(capturedDepositSnapshot.captured.deposit!!.id, CoreMatchers.`is`(1L)) },
-                { MatcherAssert.assertThat(capturedDepositSnapshot.captured.amount, CoreMatchers.`is`(350f)) },
+                { MatcherAssert.assertThat(capturedDepositSnapshot.captured.amount, CoreMatchers.`is`(350.0)) },
                 { MatcherAssert.assertThat(capturedDepositSnapshot.captured.date, CoreMatchers.`is`(LocalDate.of(2020, 3, 1))) }
         )
     }
@@ -185,7 +185,7 @@ internal class DepositServiceTest {
                 { MatcherAssert.assertThat(capturedAuditId.captured, CoreMatchers.`is`(1L)) },
                 { MatcherAssert.assertThat(history.history.size, CoreMatchers.`is`(2)) },
                 { MatcherAssert.assertThat(history.current.id, CoreMatchers.`is`(1L)) },
-                { MatcherAssert.assertThat(history.current.amount, CoreMatchers.`is`(100f)) }
+                { MatcherAssert.assertThat(history.current.amount, CoreMatchers.`is`(100.0)) }
         )
     }
 }

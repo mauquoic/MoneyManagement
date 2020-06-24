@@ -2,8 +2,9 @@ package com.mauquoi.money.business.service
 
 import com.mauquoi.money.business.error.UnknownCurrencyException
 import com.mauquoi.money.business.gateway.ecb.EcbGateway
+import com.mauquoi.money.model.Account
 import com.mauquoi.money.model.OverviewItem
-import com.mauquoi.money.model.Stock
+import com.mauquoi.money.model.StockPosition
 import com.mauquoi.money.model.dto.CurrencyLookupDto
 import org.springframework.stereotype.Service
 import java.time.LocalDate
@@ -22,25 +23,35 @@ class CurrencyService @Inject constructor(private val ecbGateway: EcbGateway,
         return supportedCurrencies
     }
 
-    fun createOverviewItem(stocks: List<Stock>, preferredCurrency: Currency): OverviewItem {
+    fun createOverviewItem(stocks: List<StockPosition>, preferredCurrency: Currency): OverviewItem {
         val distribution = createDistributionMap(stocks)
         return OverviewItem(mainCurrency = preferredCurrency,
                 mainCurrencyValue = calculateMainCurrencyValue(distribution, preferredCurrency),
                 distribution = distribution)
     }
 
-    private fun calculateMainCurrencyValue(distribution: Map<Currency, Float>, preferredCurrency: Currency): Float {
-        return distribution.map { entry -> convertCurrency(preferredCurrency, entry.key, entry.value.toDouble()) }
-                .sumByDouble { it }
-                .toFloat()
+    fun createAccountOverviewItem(accounts: List<Account>, preferredCurrency: Currency): OverviewItem {
+        val distribution = createAccountDistributionMap(accounts)
+        return OverviewItem(mainCurrency = preferredCurrency,
+                mainCurrencyValue = calculateMainCurrencyValue(distribution, preferredCurrency),
+                distribution = distribution)
     }
 
-    private fun createDistributionMap(stocks: List<Stock>): Map<Currency, Float> {
-        return stocks.groupBy { it.currency }.mapValues { entry -> entry.value.sumByDouble { it.calculateValue().toDouble() }.toFloat() }
+    private fun createAccountDistributionMap(accounts: List<Account>): Map<Currency, Double> {
+        return accounts.groupBy { it.currency }.mapValues { entry -> entry.value.sumByDouble { it.amount } }
+    }
+
+    private fun calculateMainCurrencyValue(distribution: Map<Currency, Double>, preferredCurrency: Currency): Double {
+        return distribution.map { entry -> convertCurrency(preferredCurrency, entry.key, entry.value) }
+                .sumByDouble { it }
+    }
+
+    private fun createDistributionMap(stocks: List<StockPosition>): Map<Currency, Double> {
+        return stocks.groupBy { it.currency() }.mapValues { entry -> entry.value.sumByDouble { it.calculateValue() } }
     }
 
     private fun convertCurrency(base: Currency, to: Currency, amount: Double): Double {
         val currencies = getRates(baseCurrency = base)
-        return currencies.rates[to]?.times(amount) ?: throw UnknownCurrencyException(base)
+        return currencies.rates[to]?.let { amount.div(it) } ?: throw UnknownCurrencyException(base)
     }
 }

@@ -39,8 +39,8 @@ class DepositService @Inject constructor(private val userRepository: UserReposit
         depositRepository.save(editedDeposit)
     }
 
-    fun getTotalDepositsValue(userId: Long): Float {
-        return getDeposits(userId).sumByDouble { it.amount.toDouble() }.toFloat()
+    fun getTotalDepositsValue(userId: Long): Double {
+        return getDeposits(userId).sumByDouble { it.amount }
     }
 
     fun addDepositSnapshot(depositId: Long, depositSnapshot: DepositSnapshot) {
@@ -51,7 +51,7 @@ class DepositService @Inject constructor(private val userRepository: UserReposit
         depositSnapshotRepository.save(new)
     }
 
-    fun updateDepositValue(depositId: Long, amount: Float) {
+    fun updateDepositValue(depositId: Long, amount: Double) {
         val deposit = getDeposit(depositId)
         val new = DepositSnapshot(deposit = deposit,
                 amount = amount,

@@ -5,7 +5,9 @@ import com.mauquoi.money.business.gateway.finnhub.FinnhubGateway
 import com.mauquoi.money.model.Dividend
 import com.mauquoi.money.model.Position
 import com.mauquoi.money.model.Stock
+import com.mauquoi.money.model.StockPosition
 import com.mauquoi.money.model.dto.FinnhubStockDto
+import com.mauquoi.money.repository.StockPositionRepository
 import com.mauquoi.money.repository.StockRepository
 import com.mauquoi.money.repository.UserRepository
 import org.springframework.stereotype.Service
@@ -14,20 +16,35 @@ import javax.inject.Inject
 @Service
 class StockService @Inject constructor(private val userRepository: UserRepository,
                                        private val stockRepository: StockRepository,
+                                       private val stockPositionRepository: StockPositionRepository,
                                        private val finnhubGateway: FinnhubGateway) {
 
-    fun getStocks(userId: Long): List<Stock> {
-        return stockRepository.findByUserId(userId).toList().sortedBy { it.id }
+    fun getStockPositions(userId: Long): List<StockPosition> {
+        return stockPositionRepository.findByUserId(userId).toList().sortedBy { it.id }
     }
 
     fun getStock(id: Long): Stock {
-        return stockRepository.findById(id).orElseThrow{ StockNotFoundException() }
+        return stockRepository.findById(id).orElseThrow { StockNotFoundException() }
     }
 
-    fun addStock(userId: Long, stockDto: Stock): Stock {
+    fun addStockPosition(userId: Long, stockDto: StockPosition): StockPosition {
         val user = userRepository.findById(userId).get()
         val stock = stockDto.copy(user = user)
-        return stockRepository.save(stock)
+        return stockPositionRepository.save(stock)
+    }
+
+    fun editStockPosition(id: Long, stock: StockPosition) {
+        val savedStock = getStockPosition(id)
+        val editedStock = savedStock.copy(
+                description = stock.description,
+                positions = editPositions(savedStock.positions, stock.positions),
+                dividends = editDividends(savedStock.dividends, stock.dividends)
+        )
+        stockPositionRepository.save(editedStock)
+    }
+
+    fun getStockPosition(id: Long): StockPosition {
+        return stockPositionRepository.findById(id).orElseThrow { StockNotFoundException() }
     }
 
     fun editStock(id: Long, stock: Stock): Stock {
@@ -35,10 +52,7 @@ class StockService @Inject constructor(private val userRepository: UserRepositor
         val editedStock = savedStock.copy(name = stock.name,
                 symbol = stock.symbol,
                 currency = stock.currency,
-                description = stock.description,
-                market = stock.market,
-                positions = editPositions(savedStock.positions, stock.positions),
-                dividends = editDividends(savedStock.dividends, stock.dividends)
+                market = stock.market
         )
         return stockRepository.save(editedStock)
     }
@@ -59,13 +73,13 @@ class StockService @Inject constructor(private val userRepository: UserRepositor
         }
     }
 
-    fun getTotalStocksValue(userId: Long): Float {
-        val stocks = getStocks(userId)
-        stocks.forEach { it.value = finnhubGateway.getStockPrice(it.createSymbol()).current }
-        return stocks.sumByDouble { it.calculateValue().toDouble() }.toFloat()
+    fun getTotalStocksValue(userId: Long): Double {
+        val stocks = getStockPositions(userId)
+        stocks.forEach { it.value = finnhubGateway.getStockPrice(it.stock.createSymbol()).current }
+        return stocks.sumByDouble { it.calculateValue() }
     }
 
-    fun getStockPrice(symbol: String): Float {
+    fun getStockPrice(symbol: String): Double {
         return finnhubGateway.getStockPrice(symbol).current
     }
 

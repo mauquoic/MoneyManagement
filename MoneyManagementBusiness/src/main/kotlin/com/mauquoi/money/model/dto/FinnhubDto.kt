@@ -3,11 +3,11 @@ package com.mauquoi.money.model.dto
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.Instant
 
-data class QuoteDto(@set:JsonProperty("o") var open: Float,
-                    @set:JsonProperty("h") var high: Float,
-                    @set:JsonProperty("l") var low: Float,
-                    @set:JsonProperty("c") var current: Float,
-                    @set:JsonProperty("pc") var previousClose: Float,
+data class QuoteDto(@set:JsonProperty("o") var open: Double,
+                    @set:JsonProperty("h") var high: Double,
+                    @set:JsonProperty("l") var low: Double,
+                    @set:JsonProperty("c") var current: Double,
+                    @set:JsonProperty("pc") var previousClose: Double,
                     @set:JsonProperty("t") var timeStamp: Instant)
 
 data class ExchangeDto(val stocks: List<FinnhubStockDto>)

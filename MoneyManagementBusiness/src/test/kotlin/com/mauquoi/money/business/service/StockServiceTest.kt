@@ -5,7 +5,8 @@ import com.mauquoi.money.business.gateway.finnhub.FinnhubGateway
 import com.mauquoi.money.business.util.TestObjectCreator
 import com.mauquoi.money.model.Dividend
 import com.mauquoi.money.model.Position
-import com.mauquoi.money.model.Stock
+import com.mauquoi.money.model.StockPosition
+import com.mauquoi.money.repository.StockPositionRepository
 import com.mauquoi.money.repository.StockRepository
 import com.mauquoi.money.repository.UserRepository
 import io.mockk.clearAllMocks
@@ -35,6 +36,9 @@ internal class StockServiceTest {
     private lateinit var stockRepository: StockRepository
 
     @MockK
+    private lateinit var stockPositionRepository: StockPositionRepository
+
+    @MockK
     private lateinit var finnhubGateway: FinnhubGateway
 
     private lateinit var stockService: StockService
@@ -42,7 +46,7 @@ internal class StockServiceTest {
     private val capturedStockId = slot<Long>()
     private val capturedDividendId = slot<Long>()
     private val capturedPositionId = slot<Long>()
-    private val capturedStock = slot<Stock>()
+    private val capturedStockPosition = slot<StockPosition>()
     private val capturedPosition = slot<Position>()
     private val capturedDividend = slot<Dividend>()
     private val capturedShortForm = slot<String>()
@@ -51,14 +55,14 @@ internal class StockServiceTest {
     @BeforeEach
     fun setUp() {
         clearAllMocks()
-        stockService = StockService(userRepository, stockRepository, finnhubGateway)
+        stockService = StockService(userRepository, stockRepository, stockPositionRepository, finnhubGateway)
     }
 
     @Test
     fun getStocks() {
-        every { stockRepository.findByUserId(capture(capturedUserId)) } returns TestObjectCreator.createStocks().toSet()
+        every { stockPositionRepository.findByUserId(capture(capturedUserId)) } returns TestObjectCreator.createStockPositions().toSet()
 
-        val stocks = stockService.getStocks(1L)
+        val stocks = stockService.getStockPositions(1L)
 
         assertAll(
                 { assertThat(capturedUserId.captured, `is`(1L)) },
@@ -66,15 +70,15 @@ internal class StockServiceTest {
                 { assertThat(stocks[1].id, `is`(2L)) },
                 { assertThat(stocks[0].positions.size, `is`(0)) },
                 { assertThat(stocks[1].positions[0].id, `is`(1L)) },
-                { assertThat(stocks[1].positions[0].fees, `is`(20.4f)) }
+                { assertThat(stocks[1].positions[0].fees, `is`(20.4)) }
         )
     }
 
     @Test
     fun getStock() {
-        every { stockRepository.findById(capture(capturedStockId)) } returns Optional.of(TestObjectCreator.createStocks()[0])
+        every { stockPositionRepository.findById(capture(capturedStockId)) } returns Optional.of(TestObjectCreator.createStockPositions()[0])
 
-        stockService.getStock(1L)
+        stockService.getStockPosition(1L)
 
         assertThat(capturedStockId.captured, `is`(1L))
     }
@@ -82,84 +86,84 @@ internal class StockServiceTest {
     @Test
     fun addStock() {
         every { userRepository.findById(capture(capturedUserId)) } returns Optional.of(TestObjectCreator.createUser())
-        every { stockRepository.save(capture(capturedStock)) } returns TestObjectCreator.createStocks()[0]
+        every { stockPositionRepository.save(capture(capturedStockPosition)) } returns TestObjectCreator.createStockPositions()[0]
 
-        val stockDto = TestObjectCreator.createStocks()[0]
+        val stockDto = TestObjectCreator.createStockPositions()[0]
         stockDto.id = null
 
-        stockService.addStock(1L, stockDto)
+        stockService.addStockPosition(1L, stockDto)
 
         assertAll(
                 { assertThat(capturedUserId.captured, `is`(1L)) },
-                { assertThat(capturedStock.captured.id, `is`(nullValue())) },
-                { assertThat(capturedStock.captured.name, `is`("Accenture")) },
-                { assertThat(capturedStock.captured.symbol, `is`("ACN")) },
-                { assertThat(capturedStock.captured.market, `is`("US")) },
-                { assertThat(capturedStock.captured.currency.currencyCode, `is`("USD")) }
+                { assertThat(capturedStockPosition.captured.id, `is`(nullValue())) },
+                { assertThat(capturedStockPosition.captured.stock.name, `is`("Accenture")) },
+                { assertThat(capturedStockPosition.captured.stock.symbol, `is`("ACN")) },
+                { assertThat(capturedStockPosition.captured.stock.market, `is`("US")) },
+                { assertThat(capturedStockPosition.captured.currency().currencyCode, `is`("USD")) }
         )
     }
 
     @Test
     fun editStock() {
-        every { stockRepository.findById(capture(capturedStockId)) } returns Optional.of(TestObjectCreator.createStocks()[0])
-        every { stockRepository.save(capture(capturedStock)) } returns TestObjectCreator.createStocks()[0]
+        every { stockPositionRepository.findById(capture(capturedStockId)) } returns Optional.of(TestObjectCreator.createStockPositions()[1])
+        every { stockPositionRepository.save(capture(capturedStockPosition)) } returns TestObjectCreator.createStockPositions()[1]
 
-        val stockDto = TestObjectCreator.createStocks()[1]
+        val stockDto = TestObjectCreator.createStockPositions()[1]
 
-        stockService.editStock(1L, stockDto)
+        stockService.editStockPosition(1L, stockDto)
 
         assertAll(
                 { assertThat(capturedStockId.captured, `is`(1L)) },
-                { assertThat(capturedStock.captured.id, `is`(1L)) },
-                { assertThat(capturedStock.captured.name, `is`("Geberit")) },
-                { assertThat(capturedStock.captured.symbol, `is`("GEBN")) },
-                { assertThat(capturedStock.captured.market, `is`("SW")) },
-                { assertThat(capturedStock.captured.dividends.size, `is`(1)) },
-                { assertThat(capturedStock.captured.positions.size, `is`(1)) },
-                { assertThat(capturedStock.captured.currency.currencyCode, `is`("CHF")) }
+                { assertThat(capturedStockPosition.captured.id, `is`(2L)) },
+                { assertThat(capturedStockPosition.captured.stock.name, `is`("Geberit")) },
+                { assertThat(capturedStockPosition.captured.stock.symbol, `is`("GEBN")) },
+                { assertThat(capturedStockPosition.captured.stock.market, `is`("SW")) },
+                { assertThat(capturedStockPosition.captured.dividends.size, `is`(1)) },
+                { assertThat(capturedStockPosition.captured.positions.size, `is`(1)) },
+                { assertThat(capturedStockPosition.captured.currency().currencyCode, `is`("CHF")) }
         )
     }
 
     @Test
     fun editStock_withNewPosition_oldPositionsRemainUnchanged() {
-        val oldStock = Stock(id = 10L, name = "Stock", symbol = "SYM", market = "SW", currency = Currency.getInstance("CHF"),
+        val oldStock = StockPosition(id = 10L, stock = TestObjectCreator.createUsStock(),
                 positions = listOf(
-                        Position(id = 1L, amount = 5, purchasePrice = 10f, fees = 2f, date = LocalDate.of(2020, 1, 15)),
-                        Position(id = 2L, amount = 6, purchasePrice = 20f, date = LocalDate.of(2020, 1, 19))
+                        Position(id = 1L, amount = 5, purchasePrice = 10.0, fees = 2.0, date = LocalDate.of(2020, 1, 15)),
+                        Position(id = 2L, amount = 6, purchasePrice = 20.0, date = LocalDate.of(2020, 1, 19))
                 ),
                 dividends = listOf(
-                        Dividend(id = 1L, totalAmount = 6f, date = LocalDate.of(2020, 4, 18)),
-                        Dividend(id = 2L, totalAmount = 7f, date = LocalDate.of(2020, 6, 18))
+                        Dividend(id = 1L, totalAmount = 6.0, date = LocalDate.of(2020, 4, 18)),
+                        Dividend(id = 2L, totalAmount = 7.0, date = LocalDate.of(2020, 6, 18))
                 )
         )
-        val newStock = Stock(id = 10L, name = "Stock", symbol = "SYM", market = "SW", currency = Currency.getInstance("CHF"),
+        val newStock = StockPosition(id = 10L, stock = TestObjectCreator.createUsStock(),
                 positions = listOf(
-                        Position(id = 1L, amount = 5, purchasePrice = 10f, fees = 2f, date = LocalDate.of(2020, 1, 15)),
-                        Position(amount = 10, purchasePrice = 30f, fees = 10f, date = LocalDate.of(2020, 5, 19))
+                        Position(id = 1L, amount = 5, purchasePrice = 10.0, fees = 2.0, date = LocalDate.of(2020, 1, 15)),
+                        Position(amount = 10, purchasePrice = 30.0, fees = 10.0, date = LocalDate.of(2020, 5, 19))
                 ),
                 dividends = listOf(
-                        Dividend(id = 1L, totalAmount = 8f, date = LocalDate.of(2020, 4, 18)),
-                        Dividend(totalAmount = 25f, date = LocalDate.of(2020, 9, 18))
+                        Dividend(id = 1L, totalAmount = 8.0, date = LocalDate.of(2020, 4, 18)),
+                        Dividend(totalAmount = 25.0, date = LocalDate.of(2020, 9, 18))
                 )
         )
-        every { stockRepository.findById(capture(capturedStockId)) } returns Optional.of(oldStock)
-        every { stockRepository.save(capture(capturedStock)) } returns newStock
+        every { stockPositionRepository.findById(capture(capturedStockId)) } returns Optional.of(oldStock)
+        every { stockPositionRepository.save(capture(capturedStockPosition)) } returns newStock
 
-        stockService.editStock(10L, newStock)
+        stockService.editStockPosition(10L, newStock)
 
         assertAll(
                 { assertThat(capturedStockId.captured, `is`(10L)) },
-                { assertThat(capturedStock.captured.id, `is`(10L)) },
-                { assertThat(capturedStock.captured.positions.size, `is`(2)) },
-                { assertThat(capturedStock.captured.positions[0].id, `is`(1L)) },
-                { assertThat(capturedStock.captured.positions[1].id, `is`(nullValue())) },
-                { assertThat(capturedStock.captured.positions[0].amount, `is`(5)) },
-                { assertThat(capturedStock.captured.positions[1].fees, `is`(10f)) },
-                { assertThat(capturedStock.captured.dividends.size, `is`(2)) },
-                { assertThat(capturedStock.captured.dividends[0].id, `is`(1L)) },
-                { assertThat(capturedStock.captured.dividends[1].id, `is`(nullValue())) },
-                { assertThat(capturedStock.captured.dividends[0].totalAmount, `is`(8f)) },
-                { assertThat(capturedStock.captured.dividends[1].date, `is`(LocalDate.of(2020, 9, 18))) }
+                { assertThat(capturedStockPosition.captured.id, `is`(10L)) },
+                { assertThat(capturedStockPosition.captured.positions.size, `is`(2)) },
+                { assertThat(capturedStockPosition.captured.positions[0].id, `is`(1L)) },
+                { assertThat(capturedStockPosition.captured.positions[1].id, `is`(nullValue())) },
+                { assertThat(capturedStockPosition.captured.positions[0].amount, `is`(5)) },
+                { assertThat(capturedStockPosition.captured.positions[1].fees, `is`(10.0)) },
+                { assertThat(capturedStockPosition.captured.dividends.size, `is`(2)) },
+                { assertThat(capturedStockPosition.captured.dividends[0].id, `is`(1L)) },
+                { assertThat(capturedStockPosition.captured.dividends[1].id, `is`(nullValue())) },
+                { assertThat(capturedStockPosition.captured.dividends[0].totalAmount, `is`(8.0)) },
+                { assertThat(capturedStockPosition.captured.dividends[1].date, `is`(LocalDate.of(2020, 9, 18))) }
         )
     }
 
@@ -175,13 +179,13 @@ internal class StockServiceTest {
 
     @Test
     fun getTotalStocksValue() {
-        every { stockRepository.findByUserId(capture(capturedUserId)) } returns TestObjectCreator.createStocks().toSet()
+        every { stockPositionRepository.findByUserId(capture(capturedUserId)) } returns TestObjectCreator.createStockPositions().toSet()
         every { finnhubGateway.getStockPrice(any()) } returns TestObjectCreator.createQuoteDto()
 
         val value = stockService.getTotalStocksValue(1L)
 
         assertAll(
-                { assertThat(value, `is`(9.5f)) },
+                { assertThat(value, `is`(9.5)) },
                 { assertThat(capturedUserId.captured, `is`(1L)) }
         )
 

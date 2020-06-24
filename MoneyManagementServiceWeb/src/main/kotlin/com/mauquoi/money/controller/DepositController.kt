@@ -2,6 +2,8 @@ package com.mauquoi.money.controller
 
 import com.mauquoi.money.business.service.DepositService
 import com.mauquoi.money.const.URL.Deposit.ADD_DEPOSIT_AUDIT
+import com.mauquoi.money.const.URL.Deposit.BASE
+import com.mauquoi.money.const.URL.Deposit.DEPOSIT_BY_ID
 import com.mauquoi.money.const.URL.Deposit.EDIT_DEPOSIT_AUDIT
 import com.mauquoi.money.const.URL.Deposit.GET_DEPOSIT_HISTORY
 import com.mauquoi.money.const.URL.Deposit.UPDATE_DEPOSIT
@@ -17,7 +19,7 @@ import org.springframework.web.bind.annotation.*
 import javax.inject.Inject
 
 @RestController
-@RequestMapping("/api/v1/users/{userId}/deposits")
+@RequestMapping(BASE)
 class DepositController @Inject constructor(private val depositService: DepositService) {
 
     @GetMapping
@@ -25,19 +27,19 @@ class DepositController @Inject constructor(private val depositService: DepositS
         return ResponseEntity.ok(depositService.getDeposits(userId))
     }
 
-    @GetMapping("/{id}")
-    fun getDeposit(@PathVariable("id") id: Long): ResponseEntity<Deposit> {
+    @GetMapping(DEPOSIT_BY_ID)
+    fun getDeposit(@PathVariable(DEPOSIT_ID) id: Long): ResponseEntity<Deposit> {
         return ResponseEntity.ok(depositService.getDeposit(id))
     }
 
-    @PutMapping("/{id}")
-    fun editDeposit(@PathVariable("id") id: Long,
-                   @RequestBody deposit: Deposit): ResponseEntity<Deposit> {
+    @PutMapping(DEPOSIT_BY_ID)
+    fun editDeposit(@PathVariable(DEPOSIT_ID) id: Long,
+                    @RequestBody deposit: Deposit): ResponseEntity<Deposit> {
         depositService.editDeposit(id, deposit)
         return ResponseEntity.noContent().build()
     }
 
-    @PostMapping()
+    @PostMapping
     fun addDeposit(@PathVariable(USER_ID) userId: Long,
                    @RequestBody deposit: Deposit): ResponseEntity<Deposit> {
         return ResponseEntity.status(HttpStatus.CREATED).body(depositService.addDeposit(userId, deposit))
@@ -45,7 +47,7 @@ class DepositController @Inject constructor(private val depositService: DepositS
 
     @PostMapping(UPDATE_DEPOSIT)
     fun updateDeposit(@PathVariable(DEPOSIT_ID) depositId: Long,
-                      @RequestParam(name = "amount", required = true) amount: Float): ResponseEntity<Nothing> {
+                      @RequestParam(name = "amount", required = true) amount: Double): ResponseEntity<Nothing> {
         depositService.updateDepositValue(depositId, amount)
         return ResponseEntity.noContent().build()
     }

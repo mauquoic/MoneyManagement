@@ -43,7 +43,7 @@ internal class DepositControllerTest {
     private val capturedDeposit = slot<Deposit>()
     private val capturedSnapshotId = slot<Long>()
     private val capturedSnapshot = slot<DepositSnapshot>()
-    private val capturedAmount = slot<Float>()
+    private val capturedAmount = slot<Double>()
 
     @BeforeEach
     fun setUp() {
@@ -86,7 +86,7 @@ internal class DepositControllerTest {
         assertAll(
                 { assertThat(capturedUserId.captured, `is`(1L)) },
                 { assertThat(capturedDeposit.captured.id, `is`(nullValue())) },
-                { assertThat(capturedDeposit.captured.amount, `is`(100f)) }
+                { assertThat(capturedDeposit.captured.amount, `is`(100.0)) }
         )
     }
 
@@ -116,7 +116,7 @@ internal class DepositControllerTest {
 
         assertAll(
                 { assertThat(capturedDepositId.captured, `is`(3L)) },
-                { assertThat(capturedDeposit.captured.amount, `is`(100f)) }
+                { assertThat(capturedDeposit.captured.amount, `is`(100.0)) }
         )
     }
 
@@ -130,7 +130,7 @@ internal class DepositControllerTest {
 
         assertAll(
                 { assertThat(capturedDepositId.captured, `is`(4L)) },
-                { assertThat(capturedAmount.captured, `is`(2500f)) }
+                { assertThat(capturedAmount.captured, `is`(2500.0)) }
         )
     }
 
@@ -159,7 +159,7 @@ internal class DepositControllerTest {
 
         assertAll(
                 { assertThat(capturedSnapshotId.captured, `is`(2L)) },
-                { assertThat(capturedSnapshot.captured.amount, `is`(250f)) },
+                { assertThat(capturedSnapshot.captured.amount, `is`(250.0)) },
                 { assertThat(capturedSnapshot.captured.date, `is`(LocalDate.of(2020, 1, 1))) }
         )
     }
