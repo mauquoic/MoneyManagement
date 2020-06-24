@@ -15,7 +15,7 @@ data class Account(@Id
                    @Column(name = "currency", nullable = false) @NotNull val currency: Currency,
                    @Column(name = "description") val description: String? = null,
                    @ManyToOne @JsonIgnore val user: User? = null
-): ValueItem {
+): ValueItem, CurrencyItem {
     override fun currency(): Currency {
         return currency
     }

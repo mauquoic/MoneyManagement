@@ -19,7 +19,7 @@ data class StockPosition(
         @ManyToOne @JsonIgnore
         val user: User? = null,
         @Transient var value: Double = 5.0
-) : ValueItem {
+) : ValueItem, CurrencyItem {
 
     override fun currency(): Currency {
         return stock.currency
