@@ -62,11 +62,6 @@ class AccountService @Inject constructor(private val userRepository: UserReposit
         return accountRepository.findById(id).orElseThrow {AccountNotFoundException()}
     }
 
-//    todo view how to do this with different currencies
-    fun getTotalAccountValue(userId: Long): Double {
-        return getAccounts(userId).sumByDouble { it.amount }
-    }
-
     fun editAudit(auditId: Long, accountSnapshot: AccountSnapshot) {
         val entry = accountAuditRepository.findById(auditId).get()
         val new = entry.copy(date = accountSnapshot.date,

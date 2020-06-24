@@ -21,9 +21,6 @@ class OverviewController @Inject constructor(private val stockService: StockServ
         val total: Int = cash + assets + deposits + cryptos
     }
 
-    // money per currency
-    // money per segment
-
     @GetMapping
     fun getOverview(@PathVariable("userId") userId: Long): ResponseEntity<Any> {
         val preferredCurrency = userService.getUser(userId).preferences?.currency
