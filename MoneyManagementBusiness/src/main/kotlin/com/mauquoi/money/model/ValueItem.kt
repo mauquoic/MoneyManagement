@@ -1,6 +1,6 @@
 package com.mauquoi.money.model
 
-interface ValueItem {
+interface ValueItem : CurrencyItem {
 
     fun value(): Double
 }

@@ -3,8 +3,9 @@ package com.mauquoi.money.business.service
 import com.mauquoi.money.business.error.UnknownCurrencyException
 import com.mauquoi.money.business.gateway.ecb.EcbGateway
 import com.mauquoi.money.model.Account
+import com.mauquoi.money.model.CurrencyItem
 import com.mauquoi.money.model.OverviewItem
-import com.mauquoi.money.model.StockPosition
+import com.mauquoi.money.model.ValueItem
 import com.mauquoi.money.model.dto.CurrencyLookupDto
 import org.springframework.stereotype.Service
 import java.time.LocalDate
@@ -23,7 +24,7 @@ class CurrencyService @Inject constructor(private val ecbGateway: EcbGateway,
         return supportedCurrencies
     }
 
-    fun createOverviewItem(stocks: List<StockPosition>, preferredCurrency: Currency): OverviewItem {
+    fun createOverviewItem(stocks: List<ValueItem>, preferredCurrency: Currency): OverviewItem {
         val distribution = createDistributionMap(stocks)
         return OverviewItem(mainCurrency = preferredCurrency,
                 mainCurrencyValue = calculateMainCurrencyValue(distribution, preferredCurrency),
@@ -46,8 +47,8 @@ class CurrencyService @Inject constructor(private val ecbGateway: EcbGateway,
                 .sumByDouble { it }
     }
 
-    private fun createDistributionMap(stocks: List<StockPosition>): Map<Currency, Double> {
-        return stocks.groupBy { it.currency() }.mapValues { entry -> entry.value.sumByDouble { it.calculateValue() } }
+    private fun createDistributionMap(stocks: List<ValueItem>): Map<Currency, Double> {
+        return stocks.groupBy { it.currency() }.mapValues { entry -> entry.value.sumByDouble { it.value() } }
     }
 
     private fun convertCurrency(base: Currency, to: Currency, amount: Double): Double {

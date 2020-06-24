@@ -18,7 +18,7 @@ data class StockPosition(
         @Column(name = "description") val description: String? = null,
         @ManyToOne @JsonIgnore
         val user: User? = null
-) : ValueItem, CurrencyItem {
+) : ValueItem {
 
     override fun currency(): Currency {
         return stock.currency
