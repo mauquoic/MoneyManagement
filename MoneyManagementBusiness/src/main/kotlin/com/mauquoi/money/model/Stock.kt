@@ -20,7 +20,7 @@ data class Stock(
         @OneToMany(cascade = [CascadeType.ALL]) val dividends: List<Dividend> = emptyList(),
         @Column(name = "description") val description: String? = null,
         @ManyToOne @JsonIgnore val user: User? = null,
-        @Transient var value: Float = 0f
+        @Transient var value: Float = 5f
 ) {
     val totalValue = calculateValue()
     val totalCosts = calculateCosts()
