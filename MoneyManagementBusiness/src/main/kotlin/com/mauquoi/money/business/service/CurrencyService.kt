@@ -31,17 +31,6 @@ class CurrencyService @Inject constructor(private val ecbGateway: EcbGateway,
                 distribution = distribution)
     }
 
-    fun createAccountOverviewItem(accounts: List<Account>, preferredCurrency: Currency): OverviewItem {
-        val distribution = createAccountDistributionMap(accounts)
-        return OverviewItem(mainCurrency = preferredCurrency,
-                mainCurrencyValue = calculateMainCurrencyValue(distribution, preferredCurrency),
-                distribution = distribution)
-    }
-
-    private fun createAccountDistributionMap(accounts: List<Account>): Map<Currency, Double> {
-        return accounts.groupBy { it.currency }.mapValues { entry -> entry.value.sumByDouble { it.amount } }
-    }
-
     private fun calculateMainCurrencyValue(distribution: Map<Currency, Double>, preferredCurrency: Currency): Double {
         return distribution.map { entry -> convertCurrency(preferredCurrency, entry.key, entry.value) }
                 .sumByDouble { it }
