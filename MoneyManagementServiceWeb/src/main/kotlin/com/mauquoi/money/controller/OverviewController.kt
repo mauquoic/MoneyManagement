@@ -17,10 +17,6 @@ class OverviewController @Inject constructor(private val stockService: StockServ
                                              private val currencyService: CurrencyService,
                                              private val userService: UserService) {
 
-    data class Overview(val cash: Int, val assets: Int, val deposits: Int, val cryptos: Int) {
-        val total: Int = cash + assets + deposits + cryptos
-    }
-
     @GetMapping
     fun getOverview(@PathVariable("userId") userId: Long): ResponseEntity<Any> {
         val preferredCurrency = userService.getUser(userId).preferences?.currency
