@@ -19,7 +19,8 @@ import javax.inject.Inject
 class StockService @Inject constructor(private val userRepository: UserRepository,
                                        private val stockRepository: StockRepository,
                                        private val stockPositionRepository: StockPositionRepository,
-                                       private val finnhubGateway: FinnhubGateway) {
+                                       private val finnhubGateway: FinnhubGateway,
+                                       private val currenciesByMarkets: Map<String, Currency>) {
 
     fun getStockPositions(userId: Long): List<StockPosition> {
         return stockPositionRepository.findByUserId(userId).toList().sortedBy { it.id }
@@ -106,18 +107,8 @@ class StockService @Inject constructor(private val userRepository: UserRepositor
             Stock(name = it.description,
                     market = exchange,
                     symbol = it.symbol.substringBefore("."),
-                    currency = getCurrencyForExchange(exchange))
+                    currency = currenciesByMarkets[exchange]?: Currency.getInstance("USD"))
         }
         stockRepository.saveAll(stocks)
-    }
-
-    private fun getCurrencyForExchange(exchange: String): Currency {
-        val currency = when (exchange) {
-            "SW" -> "CHF"
-            "DE", "FR" -> "EUR"
-            else -> "USD"
-        }
-
-        return Currency.getInstance(currency)
     }
 }

@@ -1,6 +1,7 @@
 package com.mauquoi.money.business.service
 
 import com.mauquoi.money.business.error.StockNotFoundException
+import com.mauquoi.money.business.gateway.ecb.CurrencyConfiguration
 import com.mauquoi.money.business.gateway.finnhub.FinnhubGateway
 import com.mauquoi.money.business.util.TestObjectCreator
 import com.mauquoi.money.model.Dividend
@@ -47,7 +48,7 @@ internal class StockServiceTest {
     private val capturedUserId = slot<Long>()
     private val capturedStockId = slot<Long>()
     private val capturedDividendId = slot<Long>()
-    private val capturedPositionId = slot<Long>()
+    private val capturedStockList = slot<List<Stock>>()
     private val capturedStockPosition = slot<StockPosition>()
     private val capturedStock = slot<Stock>()
     private val capturedLookup = slot<String>()
@@ -57,7 +58,7 @@ internal class StockServiceTest {
     @BeforeEach
     fun setUp() {
         clearAllMocks()
-        stockService = StockService(userRepository, stockRepository, stockPositionRepository, finnhubGateway)
+        stockService = StockService(userRepository, stockRepository, stockPositionRepository, finnhubGateway, CurrencyConfiguration().currenciesByMarkets())
     }
 
     @Test
@@ -252,6 +253,38 @@ internal class StockServiceTest {
         assertAll(
                 { assertThat(stockName.description, `is`("Accenture")) },
                 { assertThat(capturedExchange.captured, `is`("US")) }
+        )
+    }
+
+    @Test
+    fun getStock_stockExists() {
+        every { stockRepository.findById(capture(capturedStockId)) } returns Optional.of(TestObjectCreator.createUsStock())
+        val stock = stockService.getStock(1L)
+
+        assertAll(
+                { assertThat(stock.name, `is`("Accenture")) },
+                { assertThat(capturedStockId.captured, `is`(1L)) }
+        )
+    }
+
+    @Test
+    fun getStock_stockDoesNotExist_errorIsThrown() {
+        every { stockRepository.findById(capture(capturedStockId)) } returns Optional.empty()
+
+        assertThrows<StockNotFoundException> { stockService.getStock(1L) }
+    }
+
+    @Test
+    fun updateStockExchange() {
+        every { finnhubGateway.getExchange(capture(capturedExchange)) } returns TestObjectCreator.createExchangeDto()
+        every { stockRepository.saveAll(capture(capturedStockList)) } returns emptyList()
+
+        stockService.updateStockExchange("SW")
+
+        assertAll(
+                { assertThat(capturedStockList.captured.size, `is`(3)) },
+                { assertThat(capturedStockList.captured[0].name, `is`("Accenture")) },
+                { assertThat(capturedStockList.captured[2].lookup, `is`("CHDVD.SW")) }
         )
     }
 }
