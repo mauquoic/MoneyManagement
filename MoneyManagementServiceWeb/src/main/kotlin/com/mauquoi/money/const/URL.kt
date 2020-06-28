@@ -39,6 +39,7 @@ object URL {
     object Stock {
         const val STOCK_QUOTE = "/stocks/{$STOCK_SYMBOL}"
         const val STOCK_NAME = "/markets/{$MARKET}/stocks/{$STOCK_SYMBOL}"
+        const val MARKET_REFRESH = "/markets/{$MARKET}/stocks"
     }
 
     object StockPosition {

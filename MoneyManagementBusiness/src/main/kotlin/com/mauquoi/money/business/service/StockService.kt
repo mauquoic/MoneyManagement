@@ -10,7 +10,9 @@ import com.mauquoi.money.model.dto.FinnhubStockDto
 import com.mauquoi.money.repository.StockPositionRepository
 import com.mauquoi.money.repository.StockRepository
 import com.mauquoi.money.repository.UserRepository
+import com.mauquoi.money.toNullable
 import org.springframework.stereotype.Service
+import java.util.*
 import javax.inject.Inject
 
 @Service
@@ -29,8 +31,9 @@ class StockService @Inject constructor(private val userRepository: UserRepositor
 
     fun addStockPosition(userId: Long, stockDto: StockPosition): StockPosition {
         val user = userRepository.findById(userId).get()
-        val stock = stockDto.copy(user = user)
-        return stockPositionRepository.save(stock)
+        val stock: Stock = stockRepository.findByLookup(stockDto.stock.createLookup()).toNullable()?: stockRepository.save(stockDto.stock)
+        val stockPosition = stockDto.copy(user = user, stock = stock)
+        return stockPositionRepository.save(stockPosition)
     }
 
     fun editStockPosition(id: Long, stock: StockPosition) {
@@ -75,7 +78,7 @@ class StockService @Inject constructor(private val userRepository: UserRepositor
 
     fun getTotalStocksValue(userId: Long): Double {
         val stocks = getStockPositions(userId)
-        stocks.forEach { it.stock.value = finnhubGateway.getStockPrice(it.stock.createSymbol()).current }
+        stocks.forEach { it.stock.value = finnhubGateway.getStockPrice(it.stock.createLookup()).current }
         return stocks.sumByDouble { it.calculateValue() }
     }
 
@@ -90,5 +93,26 @@ class StockService @Inject constructor(private val userRepository: UserRepositor
         } else {
             exchangeDto.stocks.first { it.symbol == symbol }
         }
+    }
+
+    fun updateStockExchange(exchange: String) {
+        val exchangeDto = finnhubGateway.getExchange(exchange)
+        val stocks = exchangeDto.stocks.map {
+            Stock(name = it.description,
+                    market = exchange,
+                    symbol = it.symbol.substringBefore("."),
+                    currency = getCurrencyForExchange(exchange))
+        }
+        stockRepository.saveAll(stocks)
+    }
+
+    private fun getCurrencyForExchange(exchange: String): Currency {
+        val currency = when (exchange) {
+            "SW" -> "CHF"
+            "DE", "FR" -> "EUR"
+            else -> "USD"
+        }
+
+        return Currency.getInstance(currency)
     }
 }

@@ -1,7 +1,5 @@
 package com.mauquoi.money.model
 
-import com.fasterxml.jackson.annotation.JsonIgnore
-import java.time.LocalDate
 import java.util.*
 import javax.persistence.*
 import javax.validation.constraints.NotNull
@@ -16,10 +14,14 @@ data class Stock(
         @Column(name = "symbol") @NotNull val symbol: String,
         @Column(name = "market") @NotNull val market: String,
         @Column(name = "currency", nullable = false) @NotNull val currency: Currency,
+        @Column(name = "lookup", nullable = false) @NotNull var lookup: String? = null,
         @Transient var value: Double = 5.0
 ) {
+    init {
+        this.lookup = createLookup()
+    }
 
-    fun createSymbol(): String {
+    fun createLookup(): String {
         return if (market != "US") {
             "$symbol.$market"
         } else {
