@@ -5,6 +5,7 @@ import com.mauquoi.money.business.gateway.finnhub.FinnhubGateway
 import com.mauquoi.money.business.util.TestObjectCreator
 import com.mauquoi.money.model.Dividend
 import com.mauquoi.money.model.Position
+import com.mauquoi.money.model.Stock
 import com.mauquoi.money.model.StockPosition
 import com.mauquoi.money.repository.StockPositionRepository
 import com.mauquoi.money.repository.StockRepository
@@ -14,6 +15,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.slot
+import io.mockk.verify
 import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
@@ -47,8 +49,8 @@ internal class StockServiceTest {
     private val capturedDividendId = slot<Long>()
     private val capturedPositionId = slot<Long>()
     private val capturedStockPosition = slot<StockPosition>()
-    private val capturedPosition = slot<Position>()
-    private val capturedDividend = slot<Dividend>()
+    private val capturedStock = slot<Stock>()
+    private val capturedLookup = slot<String>()
     private val capturedShortForm = slot<String>()
     private val capturedExchange = slot<String>()
 
@@ -84,14 +86,43 @@ internal class StockServiceTest {
     }
 
     @Test
-    fun addStock() {
+    fun addStockPosition_stockExists_noNewStockCreated() {
         every { userRepository.findById(capture(capturedUserId)) } returns Optional.of(TestObjectCreator.createUser())
         every { stockPositionRepository.save(capture(capturedStockPosition)) } returns TestObjectCreator.createStockPositions()[0]
+        every { stockRepository.findByLookup(capture(capturedLookup)) } returns Optional.of(TestObjectCreator.createUsStock())
 
         val stockDto = TestObjectCreator.createStockPositions()[0]
         stockDto.id = null
 
         stockService.addStockPosition(1L, stockDto)
+
+        verify(exactly = 1) { stockRepository.findByLookup(any()) }
+        verify(exactly = 0) { stockRepository.save(any<Stock>()) }
+
+        assertAll(
+                { assertThat(capturedUserId.captured, `is`(1L)) },
+                { assertThat(capturedStockPosition.captured.id, `is`(nullValue())) },
+                { assertThat(capturedStockPosition.captured.stock.name, `is`("Accenture")) },
+                { assertThat(capturedStockPosition.captured.stock.symbol, `is`("ACN")) },
+                { assertThat(capturedStockPosition.captured.stock.market, `is`("US")) },
+                { assertThat(capturedStockPosition.captured.currency().currencyCode, `is`("USD")) }
+        )
+    }
+
+    @Test
+    fun addStockPosition_stockDoesNotExist_newStockCreated() {
+        every { userRepository.findById(capture(capturedUserId)) } returns Optional.of(TestObjectCreator.createUser())
+        every { stockPositionRepository.save(capture(capturedStockPosition)) } returns TestObjectCreator.createStockPositions()[0]
+        every { stockRepository.save(capture(capturedStock)) } returns TestObjectCreator.createUsStock()
+        every { stockRepository.findByLookup(capture(capturedLookup)) } returns Optional.empty()
+
+        val stockDto = TestObjectCreator.createStockPositions()[0]
+        stockDto.id = null
+
+        stockService.addStockPosition(1L, stockDto)
+
+        verify(exactly = 1) { stockRepository.findByLookup(any()) }
+        verify(exactly = 1) { stockRepository.save(any<Stock>()) }
 
         assertAll(
                 { assertThat(capturedUserId.captured, `is`(1L)) },

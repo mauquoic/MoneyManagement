@@ -31,9 +31,14 @@ class StockService @Inject constructor(private val userRepository: UserRepositor
 
     fun addStockPosition(userId: Long, stockDto: StockPosition): StockPosition {
         val user = userRepository.findById(userId).get()
-        val stock: Stock = stockRepository.findByLookup(stockDto.stock.createLookup()).toNullable()?: stockRepository.save(stockDto.stock)
+        val stock: Stock = findOrCreateStock(stockDto)
         val stockPosition = stockDto.copy(user = user, stock = stock)
         return stockPositionRepository.save(stockPosition)
+    }
+
+    private fun findOrCreateStock(stockDto: StockPosition): Stock {
+        return stockRepository.findByLookup(stockDto.stock.createLookup()).toNullable()
+                ?: stockRepository.save(stockDto.stock)
     }
 
     fun editStockPosition(id: Long, stock: StockPosition) {
