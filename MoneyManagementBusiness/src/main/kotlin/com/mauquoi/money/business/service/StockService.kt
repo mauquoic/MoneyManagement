@@ -106,9 +106,13 @@ class StockService @Inject constructor(private val userRepository: UserRepositor
         val stocks = exchangeDto.stocks.map {
             Stock(name = it.description,
                     market = exchange,
-                    symbol = it.symbol.substringBefore("."),
-                    currency = currenciesByMarkets[exchange]?: Currency.getInstance("USD"))
+                    symbol = if (exchange == "US") {
+                        it.symbol
+                    } else {
+                        it.symbol.substringBeforeLast(".")
+                    },
+                    currency = currenciesByMarkets[exchange] ?: Currency.getInstance("USD"))
         }
-        stockRepository.saveAll(stocks)
+        stockRepository.saveAll(stocks.distinctBy { it.lookup })
     }
 }

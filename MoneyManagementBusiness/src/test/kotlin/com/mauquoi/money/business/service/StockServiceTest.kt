@@ -8,6 +8,8 @@ import com.mauquoi.money.model.Dividend
 import com.mauquoi.money.model.Position
 import com.mauquoi.money.model.Stock
 import com.mauquoi.money.model.StockPosition
+import com.mauquoi.money.model.dto.ExchangeDto
+import com.mauquoi.money.model.dto.FinnhubStockDto
 import com.mauquoi.money.repository.StockPositionRepository
 import com.mauquoi.money.repository.StockRepository
 import com.mauquoi.money.repository.UserRepository
@@ -275,7 +277,7 @@ internal class StockServiceTest {
     }
 
     @Test
-    fun updateStockExchange() {
+    fun updateStockExchange_nonUS_lookupContainsMarket() {
         every { finnhubGateway.getExchange(capture(capturedExchange)) } returns TestObjectCreator.createExchangeDto()
         every { stockRepository.saveAll(capture(capturedStockList)) } returns emptyList()
 
@@ -285,6 +287,24 @@ internal class StockServiceTest {
                 { assertThat(capturedStockList.captured.size, `is`(3)) },
                 { assertThat(capturedStockList.captured[0].name, `is`("Accenture")) },
                 { assertThat(capturedStockList.captured[2].lookup, `is`("CHDVD.SW")) }
+        )
+    }
+
+    @Test
+    fun updateStockExchange_duplicatesAreFilteredOut_usMarket_lookupDoesNotContainMarket() {
+        val exchange = ExchangeDto(listOf(
+                FinnhubStockDto(description = "Accenture", symbol = "ACN", displaySymbol = "ACN"),
+                FinnhubStockDto(description = "Accenture", symbol = "ACN", displaySymbol = "ACN"),
+                FinnhubStockDto(description = "Agriculture Something", symbol = "AGM.A", displaySymbol = "AGM.A")
+        ))
+        every { finnhubGateway.getExchange(capture(capturedExchange)) } returns exchange
+        every { stockRepository.saveAll(capture(capturedStockList)) } returns emptyList()
+
+        stockService.updateStockExchange("US")
+
+        assertAll(
+                { assertThat(capturedStockList.captured.size, `is`(2)) },
+                { assertThat(capturedStockList.captured[1].lookup, `is`("AGM.A")) }
         )
     }
 }
