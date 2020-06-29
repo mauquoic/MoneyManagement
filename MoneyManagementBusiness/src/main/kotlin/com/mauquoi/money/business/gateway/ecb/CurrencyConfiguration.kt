@@ -60,7 +60,7 @@ class CurrencyConfiguration {
                 "NZ" to Currency.getInstance("NZD"),
                 "SI" to Currency.getInstance("SGD"),
                 "MX" to Currency.getInstance("MXN"),
-                "T" to Currency.getInstance("EUR"),
+                "T" to Currency.getInstance("JPY"),
                 "JK" to Currency.getInstance("IDR"),
                 "TO" to Currency.getInstance("CAD"),
                 "AS" to Currency.getInstance("EUR"),
