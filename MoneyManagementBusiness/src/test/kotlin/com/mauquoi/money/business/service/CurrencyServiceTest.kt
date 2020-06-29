@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
 
 import org.junit.jupiter.api.extension.ExtendWith
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.util.*
 
@@ -53,5 +54,22 @@ internal class CurrencyServiceTest {
         val currencies = currencyService.getCurrencies()
 
         assertThat(currencies.size > 5, `is`(true))
+    }
+
+    @Test
+    fun createOverviewItem() {
+        val usd = Currency.getInstance("USD")
+        every { ecbGateway.getConversionValues(capture(capturedCurrency)) } returns TestObjectCreator.createCurrencyLookupDto()
+        val stocks = TestObjectCreator.createStockPositions()
+
+        val overviewItem = currencyService.createOverviewItem(stocks, usd)
+
+        assertAll(
+                { assertThat(overviewItem.distribution.size, `is`(2))},
+                { assertThat(overviewItem.distribution[usd], `is`(BigDecimal.valueOf(25.0)))},
+                { assertThat(overviewItem.distribution[Currency.getInstance("CHF")], `is`(BigDecimal.valueOf(25.0)))},
+                { assertThat(overviewItem.mainCurrency, `is`(usd))},
+                { assertThat(overviewItem.mainCurrencyValue, `is`(BigDecimal.valueOf(47.73)))}
+        )
     }
 }

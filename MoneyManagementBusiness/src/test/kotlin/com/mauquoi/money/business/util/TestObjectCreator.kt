@@ -48,7 +48,7 @@ object TestObjectCreator {
 
     fun createStockPositions(): List<StockPosition> {
         return listOf(
-                StockPosition(id = 1L, stock = createUsStock()),
+                StockPosition(id = 1L, stock = createUsStock(), positions = listOf(createPosition())),
                 StockPosition(id = 2L, stock = createChStock(),
                         positions = listOf(createPosition()),
                         dividends = listOf(createDividend()))

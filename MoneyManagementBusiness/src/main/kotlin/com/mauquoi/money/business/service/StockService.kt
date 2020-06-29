@@ -82,12 +82,6 @@ class StockService @Inject constructor(private val userRepository: UserRepositor
         }
     }
 
-    fun getTotalStocksValue(userId: Long): Double {
-        val stocks = getStockPositions(userId)
-        stocks.forEach { it.stock.value = finnhubGateway.getStockPrice(it.stock.createLookup()).current }
-        return stocks.sumByDouble { it.calculateValue() }
-    }
-
     fun getStockPrice(symbol: String): Double {
         return finnhubGateway.getStockPrice(symbol).current
     }

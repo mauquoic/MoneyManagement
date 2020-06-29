@@ -73,7 +73,7 @@ internal class StockServiceTest {
                 { assertThat(capturedUserId.captured, `is`(1L)) },
                 { assertThat(stocks[0].id, `is`(1L)) },
                 { assertThat(stocks[1].id, `is`(2L)) },
-                { assertThat(stocks[0].positions.size, `is`(0)) },
+                { assertThat(stocks[0].positions.size, `is`(1)) },
                 { assertThat(stocks[1].positions[0].id, `is`(1L)) },
                 { assertThat(stocks[1].positions[0].fees, `is`(20.4)) }
         )
@@ -209,20 +209,6 @@ internal class StockServiceTest {
         val err = assertThrows<StockNotFoundException> { stockService.getStock(1L) }
 
         assertThat(err.localizedMessage, CoreMatchers.`is`("No stock could be found by that ID."))
-    }
-
-    @Test
-    fun getTotalStocksValue() {
-        every { stockPositionRepository.findByUserId(capture(capturedUserId)) } returns TestObjectCreator.createStockPositions().toSet()
-        every { finnhubGateway.getStockPrice(any()) } returns TestObjectCreator.createQuoteDto()
-
-        val value = stockService.getTotalStocksValue(1L)
-
-        assertAll(
-                { assertThat(value, `is`(9.5)) },
-                { assertThat(capturedUserId.captured, `is`(1L)) }
-        )
-
     }
 
     @Test
