@@ -56,8 +56,7 @@ internal class OverviewControllerTest {
     fun getOverview() {
         every { stockService.getStockPositions(any()) } returns TestObjectCreator.createStockPositions()
         every { accountService.getAccounts(any()) } returns TestObjectCreator.createAccounts()
-        val user = TestObjectCreator.createUser()
-        every { userService.getUser(any()) } returns user.copy(preferences = UserPreferences())
+        every { userService.getUser(any()) } returns TestObjectCreator.createUserWithPreferences()
         every { currencyService.createOverviewItem(any(), any()) } returns OverviewItem(mainCurrencyValue = BigDecimal.ONE,
                 mainCurrency = Currency.getInstance("USD"),
                 distribution = mapOf(Currency.getInstance("USD") to BigDecimal.ONE,
