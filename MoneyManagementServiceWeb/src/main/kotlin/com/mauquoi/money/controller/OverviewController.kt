@@ -2,6 +2,7 @@ package com.mauquoi.money.controller
 
 import com.mauquoi.money.business.error.PreferredCurrencyUnknownException
 import com.mauquoi.money.business.service.*
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -17,7 +18,7 @@ class OverviewController @Inject constructor(private val stockService: StockServ
                                              private val currencyService: CurrencyService,
                                              private val userService: UserService) {
 
-    @GetMapping
+    @GetMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getOverview(@PathVariable("userId") userId: Long): ResponseEntity<Any> {
         val preferredCurrency = userService.getUser(userId).preferences?.currency
                 ?: throw PreferredCurrencyUnknownException()
