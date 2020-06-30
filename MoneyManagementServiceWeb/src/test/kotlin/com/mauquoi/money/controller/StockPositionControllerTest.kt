@@ -48,7 +48,7 @@ internal class StockPositionControllerTest {
     fun getStockPositions() {
         every { stockService.getStockPositions(capture(capturedUserId)) } returns TestObjectCreator.createStockPositions()
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/1/stocks")
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/1/stock-positions")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk)
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].id", `is`(1)))
@@ -65,7 +65,7 @@ internal class StockPositionControllerTest {
     fun getStockPosition() {
         every { stockService.getStockPosition(capture(capturedStockPositionId)) } returns TestObjectCreator.createStockPositions()[1]
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/1/stocks/2")
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/1/stock-positions/2")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk)
                 .andExpect(MockMvcResultMatchers.jsonPath("id", `is`(2)))
@@ -82,7 +82,7 @@ internal class StockPositionControllerTest {
     fun editStockPosition() {
         every { stockService.editStockPosition(capture(capturedStockPositionId), capture(capturedStockPosition)) } just runs
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/users/1/stocks/3")
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/users/1/stock-positions/3")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(TestObjectCreator.createStockPositions()[1])))
                 .andExpect(MockMvcResultMatchers.status().isNoContent)
@@ -98,7 +98,7 @@ internal class StockPositionControllerTest {
     fun addStockPosition() {
         every { stockService.addStockPosition(capture(capturedUserId), capture(capturedStockPosition)) } returns TestObjectCreator.createStockPositions()[0]
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users/2/stocks")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users/2/stock-positions")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(TestObjectCreator.createStockPositions()[0])))
                 .andExpect(MockMvcResultMatchers.status().isCreated)

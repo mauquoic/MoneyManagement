@@ -43,7 +43,7 @@ object URL {
     }
 
     object StockPosition {
-        const val BASE = "$USER_BASE/{$USER_ID}/stocks"
+        const val BASE = "$USER_BASE/{$USER_ID}/stock-positions"
         const val STOCKS_BY_ID = "/{$STOCK_ID}"
     }
 
