@@ -60,5 +60,5 @@ data class Dividend(@Id
                     @GeneratedValue(strategy = GenerationType.IDENTITY)
                     var id: Long? = null,
                     @Column(name = "totalAmount", nullable = false) @NotNull val totalAmount: Double,
-                    @Column(name = "date", nullable = false) @NotNull val date: LocalDate? = LocalDate.now()
+                    @Column(name = "date", nullable = false) @NotNull val date: LocalDate = LocalDate.now()
 )

@@ -4,11 +4,10 @@ import com.mauquoi.money.const.URL.PathVariable.ACCOUNT_ID
 import com.mauquoi.money.const.URL.PathVariable.AUDIT_ID
 import com.mauquoi.money.const.URL.PathVariable.DEPOSIT_ID
 import com.mauquoi.money.const.URL.PathVariable.MARKET
-import com.mauquoi.money.const.URL.PathVariable.STOCK_ID
+import com.mauquoi.money.const.URL.PathVariable.STOCK_POSITION_ID
 import com.mauquoi.money.const.URL.PathVariable.STOCK_SYMBOL
 import com.mauquoi.money.const.URL.PathVariable.USER_ID
 import com.mauquoi.money.const.URL.Shared.API_BASE
-import com.mauquoi.money.const.URL.Shared.USERS
 import com.mauquoi.money.const.URL.Shared.USER_BASE
 
 object URL {
@@ -44,7 +43,7 @@ object URL {
 
     object StockPosition {
         const val BASE = "$USER_BASE/{$USER_ID}/stock-positions"
-        const val STOCKS_BY_ID = "/{$STOCK_ID}"
+        const val STOCK_POSITIONS_BY_ID = "/{$STOCK_POSITION_ID}"
     }
 
     object Shared {
@@ -55,7 +54,7 @@ object URL {
 
     object PathVariable {
         const val USER_ID = "userId"
-        const val STOCK_ID = "stockId"
+        const val STOCK_POSITION_ID = "stockPositionId"
         const val ACCOUNT_ID = "accountId"
         const val DEPOSIT_ID = "depositId"
         const val AUDIT_ID = "auditId"
