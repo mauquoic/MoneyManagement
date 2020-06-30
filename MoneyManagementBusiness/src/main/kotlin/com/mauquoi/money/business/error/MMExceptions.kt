@@ -27,4 +27,4 @@ class PreferredCurrencyUnknownException : RuntimeException("No currency preferen
 class UnknownCurrencyException(currency: Currency) : RuntimeException("Could not convert to the currency $currency.")
 
 @ResponseStatus(value = HttpStatus.NOT_FOUND)
-class UnknownMarketException(id: String) : RuntimeException("No market could be found by ID $id.")
+class MarketNotFoundException(id: String) : RuntimeException("No market could be found by ID $id.")

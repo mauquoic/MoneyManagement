@@ -1,23 +1,24 @@
 package com.mauquoi.money.business.service
 
+import com.mauquoi.money.business.error.MarketNotFoundException
 import com.mauquoi.money.business.gateway.ecb.CurrencyConfiguration
 import com.mauquoi.money.business.gateway.ecb.EcbGateway
 import com.mauquoi.money.business.util.TestObjectCreator
-import com.mauquoi.money.model.dto.CurrencyLookupDto
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.slot
+import org.hamcrest.CoreMatchers
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.Is.`is`
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
+import org.junit.jupiter.api.assertThrows
 
 import org.junit.jupiter.api.extension.ExtendWith
 import java.math.BigDecimal
-import java.time.LocalDate
 import java.util.*
 
 @ExtendWith(MockKExtension::class)
@@ -28,6 +29,7 @@ internal class CurrencyServiceTest {
     lateinit var ecbGateway: EcbGateway
 
     private val capturedCurrency = slot<Currency>()
+    val usd = Currency.getInstance("USD")
 
     @BeforeEach
     fun setUp() {
@@ -37,10 +39,9 @@ internal class CurrencyServiceTest {
 
     @Test
     fun getRates() {
-        val currency = Currency.getInstance("USD")
         every { ecbGateway.getConversionValues(capture(capturedCurrency)) } returns TestObjectCreator.createCurrencyLookupDto()
 
-        val rates = currencyService.getRates(currency)
+        val rates = currencyService.getRates(usd)
 
         assertAll(
                 { assertThat(capturedCurrency.captured.currencyCode, `is`("USD"))},
@@ -58,7 +59,7 @@ internal class CurrencyServiceTest {
 
     @Test
     fun createOverviewItem() {
-        val usd = Currency.getInstance("USD")
+
         every { ecbGateway.getConversionValues(capture(capturedCurrency)) } returns TestObjectCreator.createCurrencyLookupDto()
         val stocks = TestObjectCreator.createStockPositions()
 
@@ -71,5 +72,17 @@ internal class CurrencyServiceTest {
                 { assertThat(overviewItem.mainCurrency, `is`(usd))},
                 { assertThat(overviewItem.mainCurrencyValue, `is`(BigDecimal.valueOf(47.73)))}
         )
+    }
+
+    @Test
+    fun getCurrencyForMarket_marketFound_currencyReturned(){
+        assertThat(currencyService.getCurrencyForMarket("US"), `is`(usd))
+    }
+
+    @Test
+    fun getCurrencyForMarket_marketNotFound_errorThrown(){
+        val err = assertThrows<MarketNotFoundException> { currencyService.getCurrencyForMarket("USS") }
+
+        assertThat(err.localizedMessage, CoreMatchers.`is`("No market could be found by ID USS."))
     }
 }

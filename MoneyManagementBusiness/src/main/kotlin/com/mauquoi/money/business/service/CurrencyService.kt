@@ -1,16 +1,13 @@
 package com.mauquoi.money.business.service
 
 import com.mauquoi.money.business.error.UnknownCurrencyException
-import com.mauquoi.money.business.error.UnknownMarketException
+import com.mauquoi.money.business.error.MarketNotFoundException
 import com.mauquoi.money.business.gateway.ecb.EcbGateway
-import com.mauquoi.money.model.Account
-import com.mauquoi.money.model.CurrencyItem
 import com.mauquoi.money.model.OverviewItem
 import com.mauquoi.money.model.ValueItem
 import com.mauquoi.money.model.dto.CurrencyLookupDto
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
-import java.math.BigInteger
 import java.math.RoundingMode
 import java.time.LocalDate
 import java.util.*
@@ -53,6 +50,6 @@ class CurrencyService @Inject constructor(private val ecbGateway: EcbGateway,
     }
 
     fun getCurrencyForMarket(market: String): Currency {
-        return currenciesByMarkets[market] ?: throw UnknownMarketException(market)
+        return currenciesByMarkets[market] ?: throw MarketNotFoundException(market)
     }
 }

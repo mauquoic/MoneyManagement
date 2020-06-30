@@ -59,7 +59,7 @@ object TestObjectCreator {
         return Stock(id = 1L, symbol = "ACN", market = "US", name = "Accenture", currency = Currency.getInstance("USD"))
     }
 
-    private fun createChStock(): Stock {
+    internal fun createChStock(): Stock {
         return Stock(id = 2L, symbol = "GEBN", market = "SW", name = "Geberit", currency = Currency.getInstance("CHF"))
     }
 

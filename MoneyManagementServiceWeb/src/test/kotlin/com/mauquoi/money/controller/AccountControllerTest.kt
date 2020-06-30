@@ -126,7 +126,7 @@ internal class AccountControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users/1/accounts/4/update?amount=2500")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isNoContent)
+                .andExpect(MockMvcResultMatchers.status().isCreated)
 
         assertAll(
                 { assertThat(capturedAccountId.captured, `is`(4L)) },
