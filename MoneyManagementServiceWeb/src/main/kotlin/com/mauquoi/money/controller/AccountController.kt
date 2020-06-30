@@ -50,7 +50,7 @@ class AccountController @Inject constructor(private val accountService: AccountS
     fun updateAccount(@PathVariable(ACCOUNT_ID) accountId: Long,
                       @RequestParam(name = "amount", required = true) amount: Double): ResponseEntity<Nothing> {
         accountService.updateAccountValue(accountId, amount)
-        return ResponseEntity.noContent().build()
+        return ResponseEntity.status(HttpStatus.CREATED).build()
     }
 
     @PostMapping(ADD_ACCOUNT_AUDIT)
