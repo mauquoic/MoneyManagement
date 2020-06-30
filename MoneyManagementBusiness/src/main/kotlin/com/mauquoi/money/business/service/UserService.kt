@@ -23,7 +23,7 @@ class UserService @Inject constructor(private val userRepository: UserRepository
 
     fun updatePreferences(userId: Long, preferences: UserPreferences) {
         val user = getUser(userId)
-        val updatedUser = user.copy(preferences = preferences)
+        val updatedUser = user.copy(preferences = user.preferences?.copy(locale = preferences.locale, currency = preferences.currency))
         userRepository.save(updatedUser)
     }
 
