@@ -36,7 +36,7 @@ class CurrencyService @Inject constructor(private val ecbGateway: EcbGateway,
 
     private fun calculateMainCurrencyValue(distribution: Map<Currency, BigDecimal>, preferredCurrency: Currency): BigDecimal {
         return distribution.map { entry -> convertCurrency(preferredCurrency, entry.key, entry.value) }
-                .reduce { acc, nextValue -> acc.plus(nextValue) }
+                .fold(BigDecimal.ZERO) { acc, nextValue -> acc.plus(nextValue) }
                 .setScale(2, RoundingMode.HALF_UP)
     }
 
