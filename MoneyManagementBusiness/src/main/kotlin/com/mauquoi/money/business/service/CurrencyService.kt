@@ -1,5 +1,6 @@
 package com.mauquoi.money.business.service
 
+import com.mauquoi.money.business.error.MarketCurrencyMismatchException
 import com.mauquoi.money.business.error.UnknownCurrencyException
 import com.mauquoi.money.business.error.MarketNotFoundException
 import com.mauquoi.money.business.gateway.ecb.EcbGateway
@@ -51,5 +52,10 @@ class CurrencyService @Inject constructor(private val ecbGateway: EcbGateway,
 
     fun getCurrencyForMarket(market: String): Currency {
         return currenciesByMarkets[market] ?: throw MarketNotFoundException(market)
+    }
+
+    fun verifyCurrencyCompatibility(market: String, currency: Currency) {
+        val marketCurrency = getCurrencyForMarket(market)
+        if (marketCurrency != currency) throw MarketCurrencyMismatchException(market, currency)
     }
 }

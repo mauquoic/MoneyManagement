@@ -25,7 +25,6 @@ fun PositionDto.fromDto(): Position = Position(
 )
 
 fun StockDetailsDto.fromDto(): Stock = Stock(
-        lookup = this.lookup,
         name = this.name,
         symbol = this.symbol,
         market = this.market,

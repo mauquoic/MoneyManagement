@@ -1,5 +1,6 @@
 package com.mauquoi.money.business.service
 
+import com.mauquoi.money.business.error.MarketCurrencyMismatchException
 import com.mauquoi.money.business.error.MarketNotFoundException
 import com.mauquoi.money.business.gateway.ecb.CurrencyConfiguration
 import com.mauquoi.money.business.gateway.ecb.EcbGateway
@@ -84,5 +85,24 @@ internal class CurrencyServiceTest {
         val err = assertThrows<MarketNotFoundException> { currencyService.getCurrencyForMarket("USS") }
 
         assertThat(err.localizedMessage, CoreMatchers.`is`("No market could be found by ID USS."))
+    }
+
+    @Test
+    fun verifyCurrencyCompatibility_marketNotFound_errorThrown(){
+        val err = assertThrows<MarketNotFoundException> { currencyService.verifyCurrencyCompatibility("USS", usd) }
+
+        assertThat(err.localizedMessage, CoreMatchers.`is`("No market could be found by ID USS."))
+    }
+
+    @Test
+    fun verifyCurrencyCompatibility_mismatch_errorThrown(){
+        val err = assertThrows<MarketCurrencyMismatchException> { currencyService.verifyCurrencyCompatibility("SW", usd) }
+
+        assertThat(err.localizedMessage, CoreMatchers.`is`("The market SW is not traded in USD."))
+    }
+
+    @Test
+    fun verifyCurrencyCompatibility_match_noErrorThrown(){
+        currencyService.verifyCurrencyCompatibility("US", usd)
     }
 }

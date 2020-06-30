@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.mauquoi.money.business.service.CurrencyService
 import com.mauquoi.money.business.service.StockService
 import com.mauquoi.money.model.StockPosition
 import com.mauquoi.money.util.TestObjectCreator
@@ -30,6 +31,8 @@ internal class StockPositionControllerTest {
 
     @MockkBean
     private lateinit var stockService: StockService
+    @MockkBean
+    private lateinit var currencyService: CurrencyService
 
     private val objectMapper: ObjectMapper = jacksonObjectMapper()
 
@@ -97,6 +100,7 @@ internal class StockPositionControllerTest {
     @Test
     fun addStockPosition() {
         every { stockService.addStockPosition(capture(capturedUserId), capture(capturedStockPosition)) } returns TestObjectCreator.createStockPositions()[0]
+        every { currencyService.verifyCurrencyCompatibility(any(), any()) } just runs
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users/2/stock-positions")
                 .contentType(MediaType.APPLICATION_JSON)

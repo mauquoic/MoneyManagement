@@ -28,3 +28,6 @@ class UnknownCurrencyException(currency: Currency) : RuntimeException("Could not
 
 @ResponseStatus(value = HttpStatus.NOT_FOUND)
 class MarketNotFoundException(id: String) : RuntimeException("No market could be found by ID $id.")
+
+@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+class MarketCurrencyMismatchException(market: String, currency: Currency) : RuntimeException("The market $market is not traded in $currency.")
