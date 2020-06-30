@@ -9,7 +9,6 @@ fun Stock.toDto(): StockDto = StockDto(name = this.name,
 
 fun Stock.toDetailsDto(): StockDetailsDto = StockDetailsDto(name = this.name,
         symbol = this.symbol,
-        lookup = this.lookup!!,
         market = this.market,
         currency = this.currency)
 

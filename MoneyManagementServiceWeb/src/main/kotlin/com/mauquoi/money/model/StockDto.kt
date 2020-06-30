@@ -10,7 +10,6 @@ data class StockDto(val name: String,
 
 data class StockDetailsDto(val name: String,
                            val symbol: String,
-                           val lookup: String,
                            val currency: Currency,
                            val market: String)
 
