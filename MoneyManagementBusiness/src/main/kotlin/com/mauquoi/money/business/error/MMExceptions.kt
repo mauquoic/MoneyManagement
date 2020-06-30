@@ -25,3 +25,6 @@ class PreferredCurrencyUnknownException : RuntimeException("No currency preferen
 
 @ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY)
 class UnknownCurrencyException(currency: Currency) : RuntimeException("Could not convert to the currency $currency.")
+
+@ResponseStatus(value = HttpStatus.NOT_FOUND)
+class UnknownMarketException(id: String) : RuntimeException("No market could be found by ID $id.")

@@ -1,6 +1,7 @@
 package com.mauquoi.money.business.service
 
 import com.mauquoi.money.business.error.UnknownCurrencyException
+import com.mauquoi.money.business.error.UnknownMarketException
 import com.mauquoi.money.business.gateway.ecb.EcbGateway
 import com.mauquoi.money.model.Account
 import com.mauquoi.money.model.CurrencyItem
@@ -17,7 +18,8 @@ import javax.inject.Inject
 
 @Service
 class CurrencyService @Inject constructor(private val ecbGateway: EcbGateway,
-                                          private val supportedCurrencies: List<Currency>) {
+                                          private val supportedCurrencies: List<Currency>,
+                                          private val currenciesByMarkets: Map<String, Currency>) {
 
     fun getRates(baseCurrency: Currency, date: LocalDate? = null): CurrencyLookupDto {
         return ecbGateway.getConversionValues(baseCurrency, date)
@@ -48,5 +50,9 @@ class CurrencyService @Inject constructor(private val ecbGateway: EcbGateway,
         if (base == to) return amount
         val currencies = getRates(baseCurrency = base)
         return currencies.rates[to]?.let { amount.setScale(2).div(it.toBigDecimal()) } ?: throw UnknownCurrencyException(base)
+    }
+
+    fun getCurrencyForMarket(market: String): Currency {
+        return currenciesByMarkets[market] ?: throw UnknownMarketException(market)
     }
 }

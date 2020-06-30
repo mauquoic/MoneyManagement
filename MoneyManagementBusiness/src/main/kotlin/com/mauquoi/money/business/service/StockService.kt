@@ -109,4 +109,8 @@ class StockService @Inject constructor(private val userRepository: UserRepositor
         }
         stockRepository.saveAll(stocks.distinctBy { it.lookup })
     }
+
+    fun getStockExchange(market: String): List<Stock> {
+        return stockRepository.findAllByMarket(market).sortedBy { it.lookup }
+    }
 }

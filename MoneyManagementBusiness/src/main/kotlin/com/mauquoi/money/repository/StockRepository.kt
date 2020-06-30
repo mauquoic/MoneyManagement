@@ -6,4 +6,5 @@ import java.util.*
 
 interface StockRepository: JpaRepository<Stock, Long> {
     fun findByLookup(createLookup: String): Optional<Stock>
+    fun findAllByMarket(market: String): Set<Stock>
 }

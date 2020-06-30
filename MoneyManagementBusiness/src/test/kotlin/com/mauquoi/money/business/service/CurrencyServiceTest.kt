@@ -32,7 +32,7 @@ internal class CurrencyServiceTest {
     @BeforeEach
     fun setUp() {
         clearAllMocks()
-        currencyService = CurrencyService(ecbGateway, CurrencyConfiguration().supportedCurrencies())
+        currencyService = CurrencyService(ecbGateway, CurrencyConfiguration().supportedCurrencies(), CurrencyConfiguration().currenciesByMarkets())
     }
 
     @Test
