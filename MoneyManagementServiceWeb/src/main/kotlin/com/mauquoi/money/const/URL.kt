@@ -44,6 +44,8 @@ object URL {
     object StockPosition {
         const val BASE = "$USER_BASE/{$USER_ID}/stock-positions"
         const val STOCK_POSITIONS_BY_ID = "/{$STOCK_POSITION_ID}"
+        const val POSITION = "/{$STOCK_POSITION_ID}/positions"
+        const val DIVIDEND = "/{$STOCK_POSITION_ID}/dividends"
     }
 
     object Shared {

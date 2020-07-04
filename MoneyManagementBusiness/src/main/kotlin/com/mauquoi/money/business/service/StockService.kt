@@ -113,4 +113,18 @@ class StockService @Inject constructor(private val userRepository: UserRepositor
     fun getStockExchange(market: String): List<Stock> {
         return stockRepository.findAllByMarket(market).sortedBy { it.lookup }
     }
+
+    fun addStockPositionPosition(stockPositionId: Long, position: Position): StockPosition {
+        val stockPosition = getStockPosition(stockPositionId)
+        val positions = stockPosition.positions.toMutableList()
+        positions.add(position)
+        return stockPositionRepository.save(stockPosition.copy(positions = positions))
+    }
+
+    fun addStockPositionDividend(stockPositionId: Long, dividend: Dividend): StockPosition {
+        val stockPosition = getStockPosition(stockPositionId)
+        val dividends = stockPosition.dividends.toMutableList()
+        dividends.add(dividend)
+        return stockPositionRepository.save(stockPosition.copy(dividends = dividends))
+    }
 }

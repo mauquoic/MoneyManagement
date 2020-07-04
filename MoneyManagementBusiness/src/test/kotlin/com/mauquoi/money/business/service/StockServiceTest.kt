@@ -49,7 +49,7 @@ internal class StockServiceTest {
     private lateinit var stockService: StockService
     private val capturedUserId = slot<Long>()
     private val capturedStockId = slot<Long>()
-    private val capturedDividendId = slot<Long>()
+    private val capturedDividend = slot<Dividend>()
     private val capturedStockList = slot<List<Stock>>()
     private val capturedStockPosition = slot<StockPosition>()
     private val capturedStock = slot<Stock>()
@@ -291,6 +291,39 @@ internal class StockServiceTest {
         assertAll(
                 { assertThat(capturedStockList.captured.size, `is`(2)) },
                 { assertThat(capturedStockList.captured[1].lookup, `is`("AGM.A")) }
+        )
+    }
+
+    @Test
+    fun addPosition() {
+        every { stockPositionRepository.findById(capture(capturedStockId)) } returns Optional.of(TestObjectCreator.createStockPositions()[0])
+        every { stockPositionRepository.save(capture(capturedStockPosition)) } returns TestObjectCreator.createStockPositions()[0]
+
+        val position = Position(amount = 20, purchasePrice = 35.0, fees = 20.4, date = LocalDate.of(2020, 1, 20))
+        stockService.addStockPositionPosition(1L, position)
+
+        assertAll(
+                { assertThat(capturedStockId.captured, `is`(1L)) },
+                { assertThat(capturedStockPosition.captured.positions.size, `is`(2)) },
+                { assertThat(capturedStockPosition.captured.positions[1].amount, `is`(20)) },
+                { assertThat(capturedStockPosition.captured.positions[1].purchasePrice, `is`(35.0)) },
+                { assertThat(capturedStockPosition.captured.positions[1].date.dayOfMonth, `is`(20)) }
+        )
+    }
+
+    @Test
+    fun addDividend() {
+        every { stockPositionRepository.findById(capture(capturedStockId)) } returns Optional.of(TestObjectCreator.createStockPositions()[0])
+        every { stockPositionRepository.save(capture(capturedStockPosition)) } returns TestObjectCreator.createStockPositions()[0]
+
+        val dividend = Dividend(totalAmount = 24.2, date = LocalDate.of(2020, 4, 18))
+        stockService.addStockPositionDividend(3L, dividend)
+
+        assertAll(
+                { assertThat(capturedStockId.captured, `is`(3L)) },
+                { assertThat(capturedStockPosition.captured.dividends.size, `is`(1)) },
+                { assertThat(capturedStockPosition.captured.dividends[0].totalAmount, `is`(24.2)) },
+                { assertThat(capturedStockPosition.captured.dividends[0].date.dayOfMonth, `is`(18)) }
         )
     }
 }

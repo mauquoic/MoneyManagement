@@ -5,9 +5,13 @@ import com.mauquoi.money.business.service.StockService
 import com.mauquoi.money.const.URL.PathVariable.STOCK_POSITION_ID
 import com.mauquoi.money.const.URL.PathVariable.USER_ID
 import com.mauquoi.money.const.URL.StockPosition.BASE
+import com.mauquoi.money.const.URL.StockPosition.DIVIDEND
+import com.mauquoi.money.const.URL.StockPosition.POSITION
 import com.mauquoi.money.const.URL.StockPosition.STOCK_POSITIONS_BY_ID
 import com.mauquoi.money.extension.fromDto
 import com.mauquoi.money.extension.toDto
+import com.mauquoi.money.model.DividendDto
+import com.mauquoi.money.model.PositionDto
 import com.mauquoi.money.model.StockPositionDto
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -38,9 +42,25 @@ class StockPositionController @Inject constructor(private val stockService: Stoc
 
     @PostMapping
     fun addStockPosition(@PathVariable(USER_ID) userId: Long,
-                         @RequestBody stockPosition: StockPositionDto): ResponseEntity<StockPositionDto> {
-        currencyService.verifyCurrencyCompatibility(stockPosition.stock.market, stockPosition.stock.currency)
-        val stockPosition = stockService.addStockPosition(userId, stockPosition.fromDto())
+                         @RequestBody stockPositionDto: StockPositionDto): ResponseEntity<StockPositionDto> {
+        currencyService.verifyCurrencyCompatibility(stockPositionDto.stock.market, stockPositionDto.stock.currency)
+        val stockPosition = stockService.addStockPosition(userId, stockPositionDto.fromDto())
+        return ResponseEntity.status(HttpStatus.CREATED).body(stockPosition.toDto())
+    }
+
+    @PostMapping(POSITION)
+    fun addStockPositionPosition(@PathVariable(USER_ID) userId: Long,
+                                 @PathVariable(STOCK_POSITION_ID) stockPositionId: Long,
+                                 @RequestBody position: PositionDto): ResponseEntity<StockPositionDto> {
+        val stockPosition = stockService.addStockPositionPosition(stockPositionId, position.fromDto())
+        return ResponseEntity.status(HttpStatus.CREATED).body(stockPosition.toDto())
+    }
+
+    @PostMapping(DIVIDEND)
+    fun addStockPositionDividend(@PathVariable(USER_ID) userId: Long,
+                                 @PathVariable(STOCK_POSITION_ID) stockPositionId: Long,
+                                 @RequestBody dividend: DividendDto): ResponseEntity<StockPositionDto> {
+        val stockPosition = stockService.addStockPositionDividend(stockPositionId, dividend.fromDto())
         return ResponseEntity.status(HttpStatus.CREATED).body(stockPosition.toDto())
     }
 }
