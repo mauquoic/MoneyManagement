@@ -14,8 +14,8 @@ fun Stock.toDetailsDto(): StockDetailsDto = StockDetailsDto(name = this.name,
 
 fun StockPosition.toDto(): StockPositionDto = StockPositionDto(id = this.id,
         stock = this.stock.toDetailsDto(),
-        positions = this.positions.map { it.toDto() },
-        dividends = this.dividends.map { it.toDto() },
+        positions = this.positions.map { it.toDto() }.sortedBy { it.id },
+        dividends = this.dividends.map { it.toDto() }.sortedBy { it.id },
         description = this.description,
         value = this.calculateValue().toBigDecimal().setScale(2, RoundingMode.HALF_UP))
 
