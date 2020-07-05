@@ -41,6 +41,10 @@ object URL {
         const val STOCKS_BY_MARKET = "/markets/{$MARKET}/stocks"
     }
 
+    object Market {
+        const val BASE = "$API_BASE/markets"
+    }
+
     object Position {
         const val BASE = "$USER_BASE/{$USER_ID}/positions"
         const val POSITIONS_BY_ID = "/{$POSITION_ID}"
