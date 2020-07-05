@@ -18,18 +18,18 @@ data class ExchangeDto(val currency: Currency,
                        val stocks: List<StockDto>,
                        val exchangeName: String? = null)
 
-data class StockPositionDto(val id: Long? = null,
-                            val stock: StockDetailsDto,
-                            val positions: List<PositionDto>,
-                            val dividends: List<DividendDto>,
-                            val description: String? = null,
-                            val value: BigDecimal? = null)
-
 data class PositionDto(val id: Long? = null,
-                       val amount: Int,
-                       val purchasePrice: Double,
-                       val fees: Double = 0.0,
-                       val date: LocalDate)
+                       val stock: StockDetailsDto,
+                       val transactions: List<TransactionDto>,
+                       val dividends: List<DividendDto>,
+                       val description: String? = null,
+                       val value: BigDecimal? = null)
+
+data class TransactionDto(val id: Long? = null,
+                          val amount: Int,
+                          val purchasePrice: Double,
+                          val fees: Double = 0.0,
+                          val date: LocalDate)
 
 data class DividendDto(val id: Long? = null,
                        val amount: Double,

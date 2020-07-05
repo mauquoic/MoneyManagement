@@ -2,7 +2,6 @@ package com.mauquoi.money.controller
 
 import com.mauquoi.money.business.service.*
 import com.mauquoi.money.model.OverviewItem
-import com.mauquoi.money.model.UserPreferences
 import com.mauquoi.money.util.TestObjectCreator
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.clearAllMocks
@@ -12,7 +11,6 @@ import org.hamcrest.CoreMatchers
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-import org.junit.jupiter.api.Assertions.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
@@ -54,7 +52,7 @@ internal class OverviewControllerTest {
 
     @Test
     fun getOverview() {
-        every { stockService.getStockPositions(any()) } returns TestObjectCreator.createStockPositions()
+        every { stockService.getPositions(any()) } returns TestObjectCreator.createPositions()
         every { accountService.getAccounts(any()) } returns TestObjectCreator.createAccounts()
         every { userService.getUser(any()) } returns TestObjectCreator.createUserWithPreferences()
         every { currencyService.createOverviewItem(any(), any()) } returns OverviewItem(mainCurrencyValue = BigDecimal.ONE,

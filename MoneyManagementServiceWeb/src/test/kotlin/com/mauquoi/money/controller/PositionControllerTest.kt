@@ -24,9 +24,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import java.time.LocalDate
 
-@WebMvcTest(StockPositionController::class)
+@WebMvcTest(PositionController::class)
 @ActiveProfiles("test")
-internal class StockPositionControllerTest {
+internal class PositionControllerTest {
 
     @Autowired
     lateinit var mockMvc: MockMvc
@@ -39,10 +39,10 @@ internal class StockPositionControllerTest {
     private val objectMapper: ObjectMapper = jacksonObjectMapper()
 
     private val capturedUserId = slot<Long>()
-    private val capturedStockPositionId = slot<Long>()
-    private val capturedStockPosition = slot<StockPosition>()
-    private val capturedDividend = slot<Dividend>()
+    private val capturedPositionId = slot<Long>()
     private val capturedPosition = slot<Position>()
+    private val capturedDividend = slot<Dividend>()
+    private val capturedTransaction = slot<Transaction>()
 
     @BeforeEach
     fun setUp() {
@@ -52,10 +52,10 @@ internal class StockPositionControllerTest {
     }
 
     @Test
-    fun getStockPositions() {
-        every { stockService.getStockPositions(capture(capturedUserId)) } returns TestObjectCreator.createStockPositions()
+    fun getPositions() {
+        every { stockService.getPositions(capture(capturedUserId)) } returns TestObjectCreator.createPositions()
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/1/stock-positions")
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/1/positions")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk)
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].id", `is`(1)))
@@ -63,16 +63,16 @@ internal class StockPositionControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].stock.symbol", `is`("GEBN")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].stock.name", `is`("Geberit")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].stock.currency", `is`("CHF")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].positions[0].purchasePrice", `is`(350.6)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].transactions[0].purchasePrice", `is`(350.6)))
 
         assertThat(capturedUserId.captured, `is`(1L))
     }
 
     @Test
-    fun getStockPosition() {
-        every { stockService.getStockPosition(capture(capturedStockPositionId)) } returns TestObjectCreator.createStockPositions()[1]
+    fun getPosition() {
+        every { stockService.getPosition(capture(capturedPositionId)) } returns TestObjectCreator.createPositions()[1]
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/1/stock-positions/2")
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/1/positions/2")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk)
                 .andExpect(MockMvcResultMatchers.jsonPath("id", `is`(2)))
@@ -80,49 +80,49 @@ internal class StockPositionControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("stock.symbol", `is`("GEBN")))
                 .andExpect(MockMvcResultMatchers.jsonPath("stock.name", `is`("Geberit")))
                 .andExpect(MockMvcResultMatchers.jsonPath("stock.currency", `is`("CHF")))
-                .andExpect(MockMvcResultMatchers.jsonPath("positions[0].purchasePrice", `is`(350.6)))
+                .andExpect(MockMvcResultMatchers.jsonPath("transactions[0].purchasePrice", `is`(350.6)))
 
-        assertThat(capturedStockPositionId.captured, `is`(2L))
+        assertThat(capturedPositionId.captured, `is`(2L))
     }
 
     @Test
-    fun editStockPosition() {
-        every { stockService.editStockPosition(capture(capturedStockPositionId), capture(capturedStockPosition)) } just runs
+    fun editPosition() {
+        every { stockService.editPosition(capture(capturedPositionId), capture(capturedPosition)) } just runs
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/users/1/stock-positions/3")
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/users/1/positions/3")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(TestObjectCreator.createStockPositions()[1])))
+                .content(objectMapper.writeValueAsString(TestObjectCreator.createPositions()[1])))
                 .andExpect(MockMvcResultMatchers.status().isNoContent)
 
         org.junit.jupiter.api.assertAll(
-                { assertThat(capturedStockPositionId.captured, `is`(3L)) },
-                { assertThat(capturedStockPosition.captured.stock.symbol, `is`("GEBN")) },
-                { assertThat(capturedStockPosition.captured.stock.name, `is`("Geberit")) }
+                { assertThat(capturedPositionId.captured, `is`(3L)) },
+                { assertThat(capturedPosition.captured.stock.symbol, `is`("GEBN")) },
+                { assertThat(capturedPosition.captured.stock.name, `is`("Geberit")) }
         )
     }
 
     @Test
-    fun addStockPosition() {
-        every { stockService.addStockPosition(capture(capturedUserId), capture(capturedStockPosition)) } returns TestObjectCreator.createStockPositions()[0]
+    fun addPosition() {
+        every { stockService.addPosition(capture(capturedUserId), capture(capturedPosition)) } returns TestObjectCreator.createPositions()[0]
         every { currencyService.verifyCurrencyCompatibility(any(), any()) } just runs
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users/2/stock-positions")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users/2/positions")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(TestObjectCreator.createStockPositions()[0])))
+                .content(objectMapper.writeValueAsString(TestObjectCreator.createPositions()[0])))
                 .andExpect(MockMvcResultMatchers.status().isCreated)
                 .andExpect(MockMvcResultMatchers.jsonPath("id", `is`(1)))
 
         org.junit.jupiter.api.assertAll(
-                { assertThat(capturedStockPosition.captured.stock.symbol, `is`("ACN")) },
-                { assertThat(capturedStockPosition.captured.stock.name, `is`("Accenture")) }
+                { assertThat(capturedPosition.captured.stock.symbol, `is`("ACN")) },
+                { assertThat(capturedPosition.captured.stock.name, `is`("Accenture")) }
         )
     }
     @Test
-    fun addStockPositionDividend() {
-        every { stockService.addStockPositionDividend(capture(capturedStockPositionId), capture(capturedDividend)) } returns TestObjectCreator.createStockPositions()[0]
+    fun addDividend() {
+        every { stockService.addDividend(capture(capturedPositionId), capture(capturedDividend)) } returns TestObjectCreator.createPositions()[0]
 
         val dividendDto = DividendDto(amount = 42.0, date = LocalDate.now())
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users/2/stock-positions/4/dividends")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users/2/positions/4/dividends")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dividendDto)))
@@ -130,19 +130,19 @@ internal class StockPositionControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("id", `is`(1)))
 
         org.junit.jupiter.api.assertAll(
-                { assertThat(capturedStockPositionId.captured, `is`(4L)) },
+                { assertThat(capturedPositionId.captured, `is`(4L)) },
                 { assertThat(capturedDividend.captured.id, `is`(nullValue())) },
                 { assertThat(capturedDividend.captured.totalAmount, `is`(42.0)) }
         )
     }
 
     @Test
-    fun addStockPositionPosition() {
-        every { stockService.addStockPositionPosition(capture(capturedStockPositionId), capture(capturedPosition)) } returns TestObjectCreator.createStockPositions()[0]
+    fun addTransaction() {
+        every { stockService.addTransaction(capture(capturedPositionId), capture(capturedTransaction)) } returns TestObjectCreator.createPositions()[0]
 
-        val positionDto = PositionDto(amount= 10, purchasePrice = 12.12, fees = 25.1, date = LocalDate.of(2020, 1, 9))
+        val positionDto = TransactionDto(amount= 10, purchasePrice = 12.12, fees = 25.1, date = LocalDate.of(2020, 1, 9))
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users/2/stock-positions/3/positions")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users/2/positions/3/transactions")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(positionDto)))
@@ -150,10 +150,10 @@ internal class StockPositionControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("id", `is`(1)))
 
         org.junit.jupiter.api.assertAll(
-                { assertThat(capturedStockPositionId.captured, `is`(3L)) },
-                { assertThat(capturedPosition.captured.id, `is`(nullValue())) },
-                { assertThat(capturedPosition.captured.amount, `is`(10)) },
-                { assertThat(capturedPosition.captured.purchasePrice, `is`(12.12)) }
+                { assertThat(capturedPositionId.captured, `is`(3L)) },
+                { assertThat(capturedTransaction.captured.id, `is`(nullValue())) },
+                { assertThat(capturedTransaction.captured.amount, `is`(10)) },
+                { assertThat(capturedTransaction.captured.purchasePrice, `is`(12.12)) }
         )
     }
 }

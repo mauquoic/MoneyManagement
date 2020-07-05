@@ -12,14 +12,14 @@ fun Stock.toDetailsDto(): StockDetailsDto = StockDetailsDto(name = this.name,
         market = this.market,
         currency = this.currency)
 
-fun StockPosition.toDto(): StockPositionDto = StockPositionDto(id = this.id,
+fun Position.toDto(): PositionDto = PositionDto(id = this.id,
         stock = this.stock.toDetailsDto(),
-        positions = this.positions.map { it.toDto() }.sortedBy { it.id },
+        transactions = this.transactions.map { it.toDto() }.sortedBy { it.id },
         dividends = this.dividends.map { it.toDto() }.sortedBy { it.id },
         description = this.description,
         value = this.calculateValue().toBigDecimal().setScale(2, RoundingMode.HALF_UP))
 
-fun Position.toDto(): PositionDto = PositionDto(id = this.id,
+fun Transaction.toDto(): TransactionDto = TransactionDto(id = this.id,
         amount = this.amount,
         purchasePrice = this.purchasePrice,
         fees = this.fees,

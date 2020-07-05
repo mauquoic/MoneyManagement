@@ -2,10 +2,10 @@ package com.mauquoi.money.extension
 
 import com.mauquoi.money.model.*
 
-fun StockPositionDto.fromDto(): StockPosition = StockPosition(
+fun PositionDto.fromDto(): Position = Position(
         id = this.id,
         stock = this.stock.fromDto(),
-        positions = this.positions.map { it.fromDto() },
+        transactions = this.transactions.map { it.fromDto() },
         dividends = this.dividends.map { it.fromDto() },
         description = this.description
 )
@@ -16,7 +16,7 @@ fun DividendDto.fromDto(): Dividend = Dividend(
         date = this.date
 )
 
-fun PositionDto.fromDto(): Position = Position(
+fun TransactionDto.fromDto(): Transaction = Transaction(
         id = this.id,
         amount = this.amount,
         date = this.date,

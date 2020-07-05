@@ -62,7 +62,7 @@ internal class CurrencyServiceTest {
     fun createOverviewItem() {
 
         every { ecbGateway.getConversionValues(capture(capturedCurrency)) } returns TestObjectCreator.createCurrencyLookupDto()
-        val stocks = TestObjectCreator.createStockPositions()
+        val stocks = TestObjectCreator.createPositions()
 
         val overviewItem = currencyService.createOverviewItem(stocks, usd)
 

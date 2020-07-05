@@ -22,7 +22,7 @@ class OverviewController @Inject constructor(private val stockService: StockServ
     fun getOverview(@PathVariable("userId") userId: Long): ResponseEntity<Any> {
         val preferredCurrency = userService.getUser(userId).preferences?.currency
                 ?: throw PreferredCurrencyUnknownException()
-        val stocks = stockService.getStockPositions(userId)
+        val stocks = stockService.getPositions(userId)
 
         val accounts = accountService.getAccounts(userId)
 

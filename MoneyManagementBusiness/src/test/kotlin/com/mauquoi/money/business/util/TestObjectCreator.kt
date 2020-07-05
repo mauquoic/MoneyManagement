@@ -46,11 +46,11 @@ object TestObjectCreator {
         )
     }
 
-    fun createStockPositions(): List<StockPosition> {
+    fun createPositions(): List<Position> {
         return listOf(
-                StockPosition(id = 1L, stock = createUsStock(), positions = listOf(createPosition())),
-                StockPosition(id = 2L, stock = createChStock(),
-                        positions = listOf(createPosition()),
+                Position(id = 1L, stock = createUsStock(), transactions = listOf(createPosition())),
+                Position(id = 2L, stock = createChStock(),
+                        transactions = listOf(createPosition()),
                         dividends = listOf(createDividend()))
         )
     }
@@ -87,8 +87,8 @@ object TestObjectCreator {
         return Dividend(id = 1L, totalAmount = 24.1, date = LocalDate.of(2020, 4, 18))
     }
 
-    private fun createPosition(): Position {
-        return Position(id = 1L, amount = 5, purchasePrice = 350.6, fees = 20.4, date = LocalDate.of(2020, 1, 15))
+    private fun createPosition(): Transaction {
+        return Transaction(id = 1L, amount = 5, purchasePrice = 350.6, fees = 20.4, date = LocalDate.of(2020, 1, 15))
     }
 
     fun createDeposit(): Deposit {
