@@ -40,6 +40,9 @@ jobs:
       - name: Build image
         run: docker build -t mauquoic/money-management-server MoneyManagementServiceWeb/
 
+      - name: Login to dockerhub
+        run: docker login --username=${{ secrets.DOCKER_USERNAME }} --password=${{ secrets.DOCKER_PASSWORD }}
+
       - name: Push to registry
         run: docker push mauquoic/money-management-server
 #        uses: docker/build-push-action@v1
