@@ -38,12 +38,12 @@ jobs:
           mvn clean install -Dregistry=https://maven.pkg.github.com/mauquoic -Dtoken=2490bf1edc7fc87a2e674e6f697de65a445c9415 -Dspring.profiles.active=test
 
       - name: Build image and push to registry
-        run: docker build -t mauquoic/money-management-server MoneyManagementServiceWeb/
-#        uses: docker/build-push-action@v1
-#        with:
-#          dockerfile: MoneyManagementServiceWeb/Dockerfile
-#          username: ${{ secrets.DOCKER_USERNAME }}
-#          password: ${{ secrets.DOCKER_PASSWORD }}
-#          repository: mauquoic/money-management-server
-#          tags: latest
+#        run: docker build -t mauquoic/money-management-server MoneyManagementServiceWeb/
+        uses: docker/build-push-action@v1
+        with:
+          dockerfile: MoneyManagementServiceWeb/
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: mauquoic/money-management-server
+          tags: latest
 
