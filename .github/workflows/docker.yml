@@ -37,11 +37,7 @@ jobs:
           echo "Running Build job"
           mvn clean install -Dregistry=https://maven.pkg.github.com/mauquoic -Dtoken=2490bf1edc7fc87a2e674e6f697de65a445c9415 -Dspring.profiles.active=test
 
-  docker:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Build and push
+      - name: Build image and push to registry
         uses: docker/build-push-action@v1
         with:
           dockerfile: ../../MoneyManagementServiceWeb/Dockerfile
