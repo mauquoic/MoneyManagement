@@ -1,6 +1,9 @@
 spring:
   main:
     allow-bean-definition-overriding: true
+  cache:
+    jcache:
+      config: classpath:ehcache.xml
 
   jpa:
     database: postgresql
