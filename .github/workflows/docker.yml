@@ -40,7 +40,7 @@ jobs:
       - name: Build image and push to registry
         uses: docker/build-push-action@v1
         with:
-          dockerfile: ../../MoneyManagementServiceWeb/Dockerfile
+          dockerfile: MoneyManagementServiceWeb/Dockerfile
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: mauquoic/money-management-server
