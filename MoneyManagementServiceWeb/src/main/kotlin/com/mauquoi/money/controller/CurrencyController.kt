@@ -5,7 +5,7 @@ import com.mauquoi.money.const.URL
 import com.mauquoi.money.const.URL.Currency.CONVERSION_RATES
 import com.mauquoi.money.const.URL.QueryParameter.BASE_CURRENCY
 import com.mauquoi.money.const.URL.QueryParameter.DATE
-import com.mauquoi.money.model.dto.CurrencyLookupDto
+import com.mauquoi.money.model.CurrencyLookup
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -29,7 +29,7 @@ class CurrencyController @Inject constructor(private val currencyService: Curren
     @GetMapping(CONVERSION_RATES, produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getConversionRates(@RequestParam(value = BASE_CURRENCY) baseCurrency: Currency,
                            @RequestParam(value = DATE)
-                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) date: LocalDate?) : ResponseEntity<CurrencyLookupDto> {
+                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) date: LocalDate?): ResponseEntity<CurrencyLookup> {
         return ResponseEntity.ok(currencyService.getRates(baseCurrency, date))
     }
 }

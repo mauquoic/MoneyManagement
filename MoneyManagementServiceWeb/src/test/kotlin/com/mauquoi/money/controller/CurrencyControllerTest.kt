@@ -52,7 +52,7 @@ internal class CurrencyControllerTest {
 
     @Test
     fun getConversionRates() {
-        every { currencyService.getRates(capture(capturedCurrency)) } returns TestObjectCreator.createCurrencyLookupDto()
+        every { currencyService.getRates(capture(capturedCurrency)) } returns TestObjectCreator.createCurrencyLookup()
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/currencies/conversion-rates?base-currency=USD")
                 .contentType(MediaType.APPLICATION_JSON))

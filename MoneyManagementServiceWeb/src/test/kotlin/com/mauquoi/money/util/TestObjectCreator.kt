@@ -3,7 +3,6 @@ package com.mauquoi.money.util
 import com.mauquoi.money.model.*
 import com.mauquoi.money.model.audit.AccountSnapshot
 import com.mauquoi.money.model.audit.DepositSnapshot
-import com.mauquoi.money.model.dto.CurrencyLookupDto
 import com.mauquoi.money.model.dto.ExchangeDto
 import com.mauquoi.money.model.dto.FinnhubStockDto
 import com.mauquoi.money.model.dto.QuoteDto
@@ -63,9 +62,9 @@ object TestObjectCreator {
         return Stock(id = 2L, symbol = "GEBN", market = "SW", name = "Geberit", currency = Currency.getInstance("CHF"))
     }
 
-    fun createCurrencyLookupDto(): CurrencyLookupDto {
+    fun createCurrencyLookup(): CurrencyLookup {
         val currency = Currency.getInstance("USD")
-        return CurrencyLookupDto(base = currency, date = LocalDate.now(), rates = mapOf(
+        return CurrencyLookup(base = currency, date = LocalDate.now(), rates = mapOf(
                 Currency.getInstance("CHF") to 1.1,
                 Currency.getInstance("EUR") to 0.9
         ))

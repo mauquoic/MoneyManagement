@@ -59,8 +59,16 @@ object TestObjectCreator {
         return Stock(id = 1L, symbol = "ACN", market = "US", name = "Accenture", currency = Currency.getInstance("USD"))
     }
 
-    internal fun createChStock(): Stock {
+    private fun createChStock(): Stock {
         return Stock(id = 2L, symbol = "GEBN", market = "SW", name = "Geberit", currency = Currency.getInstance("CHF"))
+    }
+
+    fun createCurrencyLookup(): CurrencyLookup {
+        val currency = Currency.getInstance("USD")
+        return CurrencyLookup(base = currency, date = LocalDate.now(), rates = mapOf(
+                Currency.getInstance("CHF") to 1.1,
+                Currency.getInstance("EUR") to 0.9
+        ))
     }
 
     fun createCurrencyLookupDto(): CurrencyLookupDto {

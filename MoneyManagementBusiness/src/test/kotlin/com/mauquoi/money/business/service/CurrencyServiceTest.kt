@@ -40,7 +40,7 @@ internal class CurrencyServiceTest {
 
     @Test
     fun getRates() {
-        every { ecbGateway.getConversionValues(capture(capturedCurrency)) } returns TestObjectCreator.createCurrencyLookupDto()
+        every { ecbGateway.getConversionValues(capture(capturedCurrency)) } returns TestObjectCreator.createCurrencyLookup()
 
         val rates = currencyService.getRates(usd)
 
@@ -61,7 +61,7 @@ internal class CurrencyServiceTest {
     @Test
     fun createOverviewItem() {
 
-        every { ecbGateway.getConversionValues(capture(capturedCurrency)) } returns TestObjectCreator.createCurrencyLookupDto()
+        every { ecbGateway.getConversionValues(capture(capturedCurrency)) } returns TestObjectCreator.createCurrencyLookup()
         val stocks = TestObjectCreator.createPositions()
 
         val overviewItem = currencyService.createOverviewItem(stocks, usd)

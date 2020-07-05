@@ -1,12 +1,12 @@
 package com.mauquoi.money.business.service
 
 import com.mauquoi.money.business.error.MarketCurrencyMismatchException
-import com.mauquoi.money.business.error.UnknownCurrencyException
 import com.mauquoi.money.business.error.MarketNotFoundException
+import com.mauquoi.money.business.error.UnknownCurrencyException
 import com.mauquoi.money.business.gateway.ecb.EcbGateway
+import com.mauquoi.money.model.CurrencyLookup
 import com.mauquoi.money.model.OverviewItem
 import com.mauquoi.money.model.ValueItem
-import com.mauquoi.money.model.dto.CurrencyLookupDto
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -19,7 +19,7 @@ class CurrencyService @Inject constructor(private val ecbGateway: EcbGateway,
                                           private val supportedCurrencies: List<Currency>,
                                           private val currenciesByMarkets: Map<String, Currency>) {
 
-    fun getRates(baseCurrency: Currency, date: LocalDate? = null): CurrencyLookupDto {
+    fun getRates(baseCurrency: Currency, date: LocalDate? = null): CurrencyLookup {
         return ecbGateway.getConversionValues(baseCurrency, date)
     }
 
@@ -47,7 +47,8 @@ class CurrencyService @Inject constructor(private val ecbGateway: EcbGateway,
     private fun convertCurrency(base: Currency, to: Currency, amount: BigDecimal): BigDecimal {
         if (base == to) return amount
         val currencies = getRates(baseCurrency = base)
-        return currencies.rates[to]?.let { amount.setScale(2).div(it.toBigDecimal()) } ?: throw UnknownCurrencyException(base)
+        return currencies.rates[to]?.let { amount.setScale(2).div(it.toBigDecimal()) }
+                ?: throw UnknownCurrencyException(base)
     }
 
     fun getCurrencyForMarket(market: String): Currency {
