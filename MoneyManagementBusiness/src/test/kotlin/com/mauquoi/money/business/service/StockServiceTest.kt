@@ -1,13 +1,13 @@
 package com.mauquoi.money.business.service
 
 import com.mauquoi.money.business.error.StockNotFoundException
-import com.mauquoi.money.business.gateway.ecb.CurrencyConfiguration
 import com.mauquoi.money.business.gateway.finnhub.FinnhubGateway
 import com.mauquoi.money.business.util.TestObjectCreator
+import com.mauquoi.money.config.BusinessConfiguration
 import com.mauquoi.money.model.Dividend
-import com.mauquoi.money.model.Transaction
-import com.mauquoi.money.model.Stock
 import com.mauquoi.money.model.Position
+import com.mauquoi.money.model.Stock
+import com.mauquoi.money.model.Transaction
 import com.mauquoi.money.model.dto.ExchangeDto
 import com.mauquoi.money.model.dto.FinnhubStockDto
 import com.mauquoi.money.repository.PositionRepository
@@ -60,7 +60,7 @@ internal class StockServiceTest {
     @BeforeEach
     fun setUp() {
         clearAllMocks()
-        stockService = StockService(userRepository, stockRepository, positionRepository, finnhubGateway, CurrencyConfiguration().currenciesByMarkets())
+        stockService = StockService(userRepository, stockRepository, positionRepository, finnhubGateway, BusinessConfiguration().markets())
     }
 
     @Test

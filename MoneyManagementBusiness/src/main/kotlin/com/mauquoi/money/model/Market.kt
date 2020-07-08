@@ -1,3 +1,5 @@
 package com.mauquoi.money.model
 
-data class Market(val market: String, val description: String)
+import java.util.*
+
+data class Market(val market: String, val description: String, val currency: Currency)

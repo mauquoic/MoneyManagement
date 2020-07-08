@@ -2,10 +2,7 @@ package com.mauquoi.money.business.service
 
 import com.mauquoi.money.business.error.StockNotFoundException
 import com.mauquoi.money.business.gateway.finnhub.FinnhubGateway
-import com.mauquoi.money.model.Dividend
-import com.mauquoi.money.model.Transaction
-import com.mauquoi.money.model.Stock
-import com.mauquoi.money.model.Position
+import com.mauquoi.money.model.*
 import com.mauquoi.money.model.dto.FinnhubStockDto
 import com.mauquoi.money.repository.PositionRepository
 import com.mauquoi.money.repository.StockRepository
@@ -20,7 +17,7 @@ class StockService @Inject constructor(private val userRepository: UserRepositor
                                        private val stockRepository: StockRepository,
                                        private val positionRepository: PositionRepository,
                                        private val finnhubGateway: FinnhubGateway,
-                                       private val currenciesByMarkets: Map<String, Currency>) {
+                                       private val markets: List<Market>) {
 
     fun getPositions(userId: Long): List<Position> {
         return positionRepository.findByUserId(userId).toList().sortedBy { it.id }
@@ -105,7 +102,7 @@ class StockService @Inject constructor(private val userRepository: UserRepositor
                     } else {
                         it.symbol.substringBeforeLast(".")
                     },
-                    currency = currenciesByMarkets[exchange] ?: Currency.getInstance("USD"))
+                    currency = markets.firstOrNull{m -> m.market == exchange}?.currency ?: Currency.getInstance("USD"))
         }
         stockRepository.saveAll(stocks.distinctBy { it.lookup })
     }

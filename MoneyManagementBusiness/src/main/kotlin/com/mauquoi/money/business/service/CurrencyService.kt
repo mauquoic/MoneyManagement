@@ -5,6 +5,7 @@ import com.mauquoi.money.business.error.MarketNotFoundException
 import com.mauquoi.money.business.error.UnknownCurrencyException
 import com.mauquoi.money.business.gateway.ecb.EcbGateway
 import com.mauquoi.money.model.CurrencyLookup
+import com.mauquoi.money.model.Market
 import com.mauquoi.money.model.OverviewItem
 import com.mauquoi.money.model.ValueItem
 import org.springframework.stereotype.Service
@@ -17,7 +18,7 @@ import javax.inject.Inject
 @Service
 class CurrencyService @Inject constructor(private val ecbGateway: EcbGateway,
                                           private val supportedCurrencies: List<Currency>,
-                                          private val currenciesByMarkets: Map<String, Currency>) {
+                                          private val markets: List<Market>) {
 
     fun getRates(baseCurrency: Currency, date: LocalDate? = null): CurrencyLookup {
         return ecbGateway.getConversionValues(baseCurrency, date)
@@ -52,7 +53,7 @@ class CurrencyService @Inject constructor(private val ecbGateway: EcbGateway,
     }
 
     fun getCurrencyForMarket(market: String): Currency {
-        return currenciesByMarkets[market] ?: throw MarketNotFoundException(market)
+        return markets.firstOrNull{m -> m.market == market}?.currency ?: throw MarketNotFoundException(market)
     }
 
     fun verifyCurrencyCompatibility(market: String, currency: Currency) {

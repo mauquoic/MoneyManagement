@@ -96,7 +96,7 @@ internal class MarketControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/markets")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk)
-                .andExpect(MockMvcResultMatchers.jsonPath("$", hasSize<Int>(6)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$", hasSize<Int>(62)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].market", CoreMatchers.`is`("US")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].description", CoreMatchers.`is`("United States Exchanges")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].market", CoreMatchers.`is`("SW")))

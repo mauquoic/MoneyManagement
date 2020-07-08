@@ -5,6 +5,7 @@ import com.mauquoi.money.business.error.MarketNotFoundException
 import com.mauquoi.money.business.gateway.ecb.CurrencyConfiguration
 import com.mauquoi.money.business.gateway.ecb.EcbGateway
 import com.mauquoi.money.business.util.TestObjectCreator
+import com.mauquoi.money.config.BusinessConfiguration
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -35,7 +36,7 @@ internal class CurrencyServiceTest {
     @BeforeEach
     fun setUp() {
         clearAllMocks()
-        currencyService = CurrencyService(ecbGateway, CurrencyConfiguration().supportedCurrencies(), CurrencyConfiguration().currenciesByMarkets())
+        currencyService = CurrencyService(ecbGateway, CurrencyConfiguration().supportedCurrencies(), BusinessConfiguration().markets())
     }
 
     @Test
