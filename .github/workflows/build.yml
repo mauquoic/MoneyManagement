@@ -40,8 +40,6 @@ jobs:
 
     # Runs the sonar analysis
     - name: SonarQube Analysis
-      run: |
-        echo "Doing the sonar analysis"
       uses: kitabisa/sonarqube-action@master
       with:
         host: ${{ secrets.SONARQUBE_HOST }}
