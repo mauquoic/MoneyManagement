@@ -27,6 +27,7 @@ jobs:
 
       # Runs the sonar analysis
       - name: Run SonarQube Analysis
+        uses: warchant/setup-sonar-scanner@v1
         run: sonar-scanner
           -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }}
           -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
