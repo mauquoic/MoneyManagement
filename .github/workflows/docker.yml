@@ -18,13 +18,13 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+      - uses: warchant/setup-sonar-scanner@v1
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-jdk11-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
-          ${{ runner.os }}-maven-jdk11-
-      - uses: warchant/setup-sonar-scanner@v1
+            ${{ runner.os }}-maven-jdk11-
 
       # Runs the sonar analysis
       - name: Run SonarQube Analysis
