@@ -28,13 +28,15 @@ jobs:
 
       # Runs the sonar analysis
       - name: Run SonarQube Analysis
-        run: sonar-scanner
-          -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }}
-          -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
-          -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
-          -Dsonar.pullrequest.github.repository=${{ github.repository }}
-          -Dsonar.scm.provider=git
-          -Dsonar.java.binaries=/tmp
+#        run: sonar-scanner
+#          -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }}
+#          -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
+#          -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
+#          -Dsonar.pullrequest.github.repository=${{ github.repository }}
+#          -Dsonar.scm.provider=git
+#          -Dsonar.java.binaries=/tmp
+        run: mvn -X verify sonar:sonar -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }}
+             -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
 
       # Runs a single command using the runners shell
       - name: Setup jdk 11
