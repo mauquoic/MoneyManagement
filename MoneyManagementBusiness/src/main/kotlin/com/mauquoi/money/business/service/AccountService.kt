@@ -59,7 +59,7 @@ class AccountService @Inject constructor(private val userRepository: UserReposit
     }
 
     fun getAccount(id: Long): Account {
-        return accountRepository.findById(id).orElseThrow {AccountNotFoundException()}
+        return accountRepository.findById(id).orElseThrow { AccountNotFoundException() }
     }
 
     fun editAudit(auditId: Long, accountSnapshot: AccountSnapshot) {
