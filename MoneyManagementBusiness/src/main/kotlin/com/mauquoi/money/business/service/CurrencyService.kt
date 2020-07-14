@@ -53,7 +53,7 @@ class CurrencyService @Inject constructor(private val ecbGateway: EcbGateway,
     }
 
     fun getCurrencyForMarket(market: String): Currency {
-        return markets.firstOrNull{m -> m.market == market}?.currency ?: throw MarketNotFoundException(market)
+        return markets.firstOrNull { m -> m.market == market }?.currency ?: throw MarketNotFoundException(market)
     }
 
     fun verifyCurrencyCompatibility(market: String, currency: Currency) {
