@@ -102,7 +102,8 @@ class StockService @Inject constructor(private val userRepository: UserRepositor
                     } else {
                         it.symbol.substringBeforeLast(".")
                     },
-                    currency = markets.firstOrNull{m -> m.market == exchange}?.currency ?: Currency.getInstance("USD"))
+                    currency = markets.firstOrNull { m -> m.market == exchange }?.currency
+                            ?: Currency.getInstance("USD"))
         }
         stockRepository.saveAll(stocks.distinctBy { it.lookup })
     }
