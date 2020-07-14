@@ -39,7 +39,7 @@ jobs:
 
       # Runs the sonar analysis
       - name: Run SonarQube Analysis
-        run: mvn -X verify sonar:sonar -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }}
+        run: mvn sonar:sonar -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }}
           -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
 
       - name: Build image
