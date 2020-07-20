@@ -17,6 +17,7 @@ spring:
         apply_to_ddl: true
 
 server:
+  port: 8080
   servlet:
     session:
       cookie:
