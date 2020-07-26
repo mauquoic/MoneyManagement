@@ -47,8 +47,9 @@
         </listeners>
 
         <resources>
-            <heap unit="kB">10</heap>
+            <heap unit="kB">250</heap>
         </resources>
+
     </cache>
 
 </config>

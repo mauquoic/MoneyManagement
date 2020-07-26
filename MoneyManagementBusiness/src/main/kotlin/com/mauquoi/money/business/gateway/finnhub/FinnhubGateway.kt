@@ -37,6 +37,7 @@ class FinnhubGateway @Inject constructor(private val builder: RestTemplateBuilde
         return stockInfo ?: throw RuntimeException("Could not retrieve the stock price")
     }
 
+    // todo not yet cached correctly
     @Cacheable(value = ["exchangesCache"])
     fun getExchange(exchange: String): Exchange {
         val restTemplate = builder.build()
