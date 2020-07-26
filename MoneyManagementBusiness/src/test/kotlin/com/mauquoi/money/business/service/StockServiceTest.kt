@@ -3,13 +3,8 @@ package com.mauquoi.money.business.service
 import com.mauquoi.money.business.error.StockNotFoundException
 import com.mauquoi.money.business.gateway.finnhub.FinnhubGateway
 import com.mauquoi.money.business.util.TestObjectCreator
-import com.mauquoi.money.config.BusinessConfiguration
-import com.mauquoi.money.model.Dividend
-import com.mauquoi.money.model.Position
-import com.mauquoi.money.model.Stock
-import com.mauquoi.money.model.Transaction
-import com.mauquoi.money.model.dto.ExchangeDto
-import com.mauquoi.money.model.dto.FinnhubStockDto
+import com.mauquoi.money.business.util.TestObjectCreator.usd
+import com.mauquoi.money.model.*
 import com.mauquoi.money.repository.PositionRepository
 import com.mauquoi.money.repository.StockRepository
 import com.mauquoi.money.repository.UserRepository
@@ -60,7 +55,7 @@ internal class StockServiceTest {
     @BeforeEach
     fun setUp() {
         clearAllMocks()
-        stockService = StockService(userRepository, stockRepository, positionRepository, finnhubGateway, BusinessConfiguration().markets())
+        stockService = StockService(userRepository, stockRepository, positionRepository, finnhubGateway)
     }
 
     @Test
@@ -221,12 +216,12 @@ internal class StockServiceTest {
     @Test
     fun getStockName_swissMarket_lookupDoneCorrectly() {
 
-        every { finnhubGateway.getExchange(capture(capturedExchange)) } returns TestObjectCreator.createExchangeDto()
+        every { finnhubGateway.getExchange(capture(capturedExchange)) } returns TestObjectCreator.createExchange()
 
         val stockName = stockService.getStockName("GEBN", "SW")
 
         assertAll(
-                { assertThat(stockName.description, `is`("Geberit")) },
+                { assertThat(stockName.name, `is`("Geberit")) },
                 { assertThat(capturedExchange.captured, `is`("SW")) }
         )
     }
@@ -234,12 +229,12 @@ internal class StockServiceTest {
     @Test
     fun getStockName_usMarket_lookupDoneCorrectly() {
 
-        every { finnhubGateway.getExchange(capture(capturedExchange)) } returns TestObjectCreator.createExchangeDto()
+        every { finnhubGateway.getExchange(capture(capturedExchange)) } returns TestObjectCreator.createExchange()
 
         val stockName = stockService.getStockName("ACN", "US")
 
         assertAll(
-                { assertThat(stockName.description, `is`("Accenture")) },
+                { assertThat(stockName.name, `is`("Accenture")) },
                 { assertThat(capturedExchange.captured, `is`("US")) }
         )
     }
@@ -264,7 +259,7 @@ internal class StockServiceTest {
 
     @Test
     fun updateStockExchange_nonUS_lookupContainsMarket() {
-        every { finnhubGateway.getExchange(capture(capturedExchange)) } returns TestObjectCreator.createExchangeDto()
+        every { finnhubGateway.getExchange(capture(capturedExchange)) } returns TestObjectCreator.createExchange()
         every { stockRepository.saveAll(capture(capturedStockList)) } returns emptyList()
 
         stockService.updateStockExchange("SW")
@@ -278,10 +273,10 @@ internal class StockServiceTest {
 
     @Test
     fun updateStockExchange_duplicatesAreFilteredOut_usMarket_lookupDoesNotContainMarket() {
-        val exchange = ExchangeDto(listOf(
-                FinnhubStockDto(description = "Accenture", symbol = "ACN", displaySymbol = "ACN"),
-                FinnhubStockDto(description = "Accenture", symbol = "ACN", displaySymbol = "ACN"),
-                FinnhubStockDto(description = "Agriculture Something", symbol = "AGM.A", displaySymbol = "AGM.A")
+        val exchange = Exchange(listOf(
+                Stock(name = "Accenture", symbol = "ACN", currency = usd(), type = "DS", market = "US"),
+                Stock(name = "Accenture", symbol = "ACN", currency = usd(), type = "DEQ", market = "US"),
+                Stock(name = "Agriculture Something", symbol = "AGM.A", currency = usd(), type = "ETF", market = "US")
         ))
         every { finnhubGateway.getExchange(capture(capturedExchange)) } returns exchange
         every { stockRepository.saveAll(capture(capturedStockList)) } returns emptyList()

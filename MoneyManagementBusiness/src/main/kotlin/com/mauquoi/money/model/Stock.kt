@@ -15,6 +15,7 @@ data class Stock(
         @Column(name = "market") @NotNull val market: String,
         @Column(name = "currency", nullable = false) @NotNull val currency: Currency,
         @Column(name = "lookup", nullable = false, unique = true) @NotNull var lookup: String? = null,
+        @Column(name = "type") val type: String? = null,
         @Transient var value: Double = 5.0
 ) {
     init {

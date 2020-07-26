@@ -3,18 +3,13 @@ package com.mauquoi.money.util
 import com.mauquoi.money.model.*
 import com.mauquoi.money.model.audit.AccountSnapshot
 import com.mauquoi.money.model.audit.DepositSnapshot
-import com.mauquoi.money.model.dto.ExchangeDto
-import com.mauquoi.money.model.dto.FinnhubStockDto
-import com.mauquoi.money.model.dto.QuoteDto
-import java.time.Instant
 import java.time.LocalDate
 import java.util.*
 
 object TestObjectCreator {
 
-    fun createUser(): User {
-        return User(id = 1L, email = "user@email.com", preferences = null)
-    }
+    fun usd(): Currency = Currency.getInstance("USD")
+    fun chf(): Currency = Currency.getInstance("CHF")
 
     fun createUserWithPreferences(): User {
         return User(id = 1L, email = "user@email.com", preferences = UserPreferences(1L, Locale.GERMAN, Currency.getInstance("USD")))
@@ -54,12 +49,20 @@ object TestObjectCreator {
         )
     }
 
-    fun createUsStock(): Stock {
-        return Stock(id = 1L, symbol = "ACN", market = "US", name = "Accenture", currency = Currency.getInstance("USD"))
+    fun createUsStock(id: Long = 1L,
+                      symbol: String = "ACN",
+                      market: String = "US",
+                      name: String = "Accenture",
+                      currency: Currency = Currency.getInstance("USD")): Stock {
+        return Stock(id = id, symbol = symbol, market = market, name = name, currency = currency, type = "EQS")
     }
 
-    internal fun createChStock(): Stock {
-        return Stock(id = 2L, symbol = "GEBN", market = "SW", name = "Geberit", currency = Currency.getInstance("CHF"))
+    internal fun createChStock(id: Long = 2L,
+                               symbol: String = "GEBN",
+                               market: String = "SW",
+                               name: String = "Geberit",
+                               currency: Currency = Currency.getInstance("CHF")): Stock {
+        return Stock(id = id, symbol = symbol, market = market, name = name, currency = currency, type = "EQS")
     }
 
     fun createCurrencyLookup(): CurrencyLookup {
@@ -70,15 +73,11 @@ object TestObjectCreator {
         ))
     }
 
-    fun createQuoteDto(): QuoteDto {
-        return QuoteDto(open = 2.0, previousClose = 1.8, current = 1.9, low = 1.7, high = 2.1, timeStamp = Instant.now())
-    }
-
-    fun createExchangeDto(): ExchangeDto {
-        return ExchangeDto(listOf(
-                FinnhubStockDto(description = "Accenture", symbol = "ACN", displaySymbol = "ACN"),
-                FinnhubStockDto(description = "Geberit", symbol = "GEBN.SW", displaySymbol = "GEBN.SW"),
-                FinnhubStockDto(description = "Swiss high dividends", symbol = "CHDVD.SW", displaySymbol = "CHDVD.SW")
+    fun createExchange(): Exchange {
+        return Exchange(listOf(
+                Stock(name = "Accenture", symbol = "ACN", currency = usd(), type = "EQS", market = "US"),
+                Stock(name = "Geberit", symbol = "GEBN", currency = chf(), type = "EQS", market = "SW"),
+                Stock(name = "Swiss high dividends", symbol = "CHDVD", currency = chf(), type = "ETF", market = "SW")
         ))
     }
 

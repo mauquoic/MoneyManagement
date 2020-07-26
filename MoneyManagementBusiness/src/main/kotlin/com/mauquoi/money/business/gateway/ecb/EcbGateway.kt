@@ -5,7 +5,7 @@ import com.mauquoi.money.business.gateway.Constants.Path.LATEST
 import com.mauquoi.money.business.gateway.Constants.Query.BASE
 import com.mauquoi.money.model.CurrencyLookup
 import com.mauquoi.money.model.dto.CurrencyLookupDto
-import com.mauquoi.money.model.dto.fromDto
+import com.mauquoi.money.mapping.fromDto
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.cache.annotation.Cacheable

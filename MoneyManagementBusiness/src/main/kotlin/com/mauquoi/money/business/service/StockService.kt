@@ -2,22 +2,22 @@ package com.mauquoi.money.business.service
 
 import com.mauquoi.money.business.error.StockNotFoundException
 import com.mauquoi.money.business.gateway.finnhub.FinnhubGateway
-import com.mauquoi.money.model.*
-import com.mauquoi.money.model.dto.FinnhubStockDto
+import com.mauquoi.money.model.Dividend
+import com.mauquoi.money.model.Position
+import com.mauquoi.money.model.Stock
+import com.mauquoi.money.model.Transaction
 import com.mauquoi.money.repository.PositionRepository
 import com.mauquoi.money.repository.StockRepository
 import com.mauquoi.money.repository.UserRepository
 import com.mauquoi.money.toNullable
 import org.springframework.stereotype.Service
-import java.util.*
 import javax.inject.Inject
 
 @Service
 class StockService @Inject constructor(private val userRepository: UserRepository,
                                        private val stockRepository: StockRepository,
                                        private val positionRepository: PositionRepository,
-                                       private val finnhubGateway: FinnhubGateway,
-                                       private val markets: List<Market>) {
+                                       private val finnhubGateway: FinnhubGateway) {
 
     fun getPositions(userId: Long): List<Position> {
         return positionRepository.findByUserId(userId).toList().sortedBy { it.id }
@@ -83,29 +83,14 @@ class StockService @Inject constructor(private val userRepository: UserRepositor
         return finnhubGateway.getStockPrice(symbol).current
     }
 
-    fun getStockName(symbol: String, exchange: String): FinnhubStockDto {
-        val exchangeDto = finnhubGateway.getExchange(exchange)
-        return if (exchange != "US") {
-            exchangeDto.stocks.first { it.symbol == "$symbol.$exchange" }
-        } else {
-            exchangeDto.stocks.first { it.symbol == symbol }
-        }
+    fun getStockName(symbol: String, market: String): Stock {
+        val exchange = finnhubGateway.getExchange(market)
+        return exchange.stocks.first { it.symbol == symbol }
     }
 
-    fun updateStockExchange(exchange: String) {
-        val exchangeDto = finnhubGateway.getExchange(exchange)
-        val stocks = exchangeDto.stocks.map {
-            Stock(name = it.description,
-                    market = exchange,
-                    symbol = if (exchange == "US") {
-                        it.symbol
-                    } else {
-                        it.symbol.substringBeforeLast(".")
-                    },
-                    currency = markets.firstOrNull { m -> m.market == exchange }?.currency
-                            ?: Currency.getInstance("USD"))
-        }
-        stockRepository.saveAll(stocks.distinctBy { it.lookup })
+    fun updateStockExchange(market: String) {
+        val exchange = finnhubGateway.getExchange(market)
+        stockRepository.saveAll(exchange.stocks.distinctBy { it.lookup })
     }
 
     fun getStockExchange(market: String): List<Stock> {

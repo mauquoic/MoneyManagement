@@ -9,7 +9,7 @@ import com.mauquoi.money.const.URL.Market.STOCK_NAME
 import com.mauquoi.money.extension.toDto
 import com.mauquoi.money.model.ExchangeDto
 import com.mauquoi.money.model.Market
-import com.mauquoi.money.model.dto.FinnhubStockDto
+import com.mauquoi.money.model.Stock
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import javax.inject.Inject
@@ -41,7 +41,7 @@ class MarketController @Inject constructor(private val stockService: StockServic
 
     @GetMapping(STOCK_NAME)
     fun getStockName(@PathVariable(URL.PathVariable.MARKET) market: String,
-                     @PathVariable(URL.PathVariable.STOCK_SYMBOL) symbol: String): ResponseEntity<FinnhubStockDto> {
+                     @PathVariable(URL.PathVariable.STOCK_SYMBOL) symbol: String): ResponseEntity<Stock> {
         return ResponseEntity.ok(stockService.getStockName(symbol, market))
     }
 }

@@ -11,7 +11,8 @@ data class StockDto(val name: String,
 data class StockDetailsDto(val name: String,
                            val symbol: String,
                            val currency: Currency,
-                           val market: String)
+                           val market: String,
+                           val type: String? = null)
 
 data class ExchangeDto(val currency: Currency,
                        val market: String,

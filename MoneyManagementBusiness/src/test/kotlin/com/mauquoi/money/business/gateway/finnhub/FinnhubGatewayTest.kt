@@ -1,7 +1,8 @@
 package com.mauquoi.money.business.gateway.finnhub
 
 import com.mauquoi.money.business.util.TestObjectCreator
-import com.mauquoi.money.model.dto.ExchangeDto
+import com.mauquoi.money.business.util.TestObjectCreator.createStockDtos
+import com.mauquoi.money.config.BusinessConfiguration
 import com.mauquoi.money.model.dto.FinnhubStockDto
 import com.mauquoi.money.model.dto.QuoteDto
 import io.mockk.MockKAnnotations
@@ -37,7 +38,7 @@ internal class FinnhubGatewayTest {
         clearAllMocks()
         MockKAnnotations.init(this)
         every { builder.build() } returns restTemplate
-        finnhubGateway = FinnhubGateway(builder, "baseUrl/v1", "token")
+        finnhubGateway = FinnhubGateway(builder, BusinessConfiguration().markets(), "baseUrl/v1", "token")
     }
 
     @Test
@@ -52,8 +53,10 @@ internal class FinnhubGatewayTest {
 
     @Test
     fun getExchange() {
-        every { restTemplate.exchange(capture(capturedUrl), HttpMethod.GET,
-                null, object : ParameterizedTypeReference<List<FinnhubStockDto>>() {}) } returns ResponseEntity.ok(TestObjectCreator.createExchangeDto().stocks)
+        every {
+            restTemplate.exchange(capture(capturedUrl), HttpMethod.GET,
+                    null, object : ParameterizedTypeReference<List<FinnhubStockDto>>() {})
+        } returns ResponseEntity.ok(createStockDtos())
 
         val exchange = finnhubGateway.getExchange("US")
         assertAll(

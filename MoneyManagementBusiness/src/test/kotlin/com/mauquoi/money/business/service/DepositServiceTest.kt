@@ -113,7 +113,7 @@ internal class DepositServiceTest {
     fun addDepositSnapshot_onlySnapshotIsAdded() {
         every { depositRepository.findById(capture(capturedDepositId)) } returns Optional.of(TestObjectCreator.createDeposit())
         every { depositSnapshotRepository.save(capture(capturedDepositSnapshot)) } returns TestObjectCreator.createDepositSnapshot()
-        val snapshot = TestObjectCreator.createDepositSnapshotWithoutDeposit()
+        val snapshot = TestObjectCreator.createDepositSnapshot(id = null, deposit = null)
         depositService.addDepositSnapshot(1L, snapshot)
 
         verify(exactly = 0) { depositRepository.save<Deposit>(any()) }

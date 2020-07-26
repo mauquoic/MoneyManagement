@@ -10,7 +10,8 @@ fun Stock.toDto(): StockDto = StockDto(name = this.name,
 fun Stock.toDetailsDto(): StockDetailsDto = StockDetailsDto(name = this.name,
         symbol = this.symbol,
         market = this.market,
-        currency = this.currency)
+        currency = this.currency,
+        type = this.type)
 
 fun Position.toDto(): PositionDto = PositionDto(id = this.id,
         stock = this.stock.toDetailsDto(),

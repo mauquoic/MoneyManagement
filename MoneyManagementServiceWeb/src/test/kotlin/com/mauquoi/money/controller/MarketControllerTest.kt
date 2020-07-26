@@ -58,13 +58,13 @@ internal class MarketControllerTest {
 
     @Test
     fun getStockName() {
-        every { stockService.getStockName(capture(capturedStockSymbol), capture(capturedMarket)) } returns TestObjectCreator.createExchangeDto().stocks[0]
+        every { stockService.getStockName(capture(capturedStockSymbol), capture(capturedMarket)) } returns TestObjectCreator.createExchange().stocks[0]
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/markets/US/stocks/ACN")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk)
-                .andExpect(MockMvcResultMatchers.jsonPath("description", CoreMatchers.`is`("Accenture")))
-                .andExpect(MockMvcResultMatchers.jsonPath("displaySymbol", CoreMatchers.`is`("ACN")))
+                .andExpect(MockMvcResultMatchers.jsonPath("name", CoreMatchers.`is`("Accenture")))
+                .andExpect(MockMvcResultMatchers.jsonPath("market", CoreMatchers.`is`("US")))
                 .andExpect(MockMvcResultMatchers.jsonPath("symbol", CoreMatchers.`is`("ACN")))
 
         org.junit.jupiter.api.assertAll(

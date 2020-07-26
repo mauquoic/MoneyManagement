@@ -28,5 +28,6 @@ fun StockDetailsDto.fromDto(): Stock = Stock(
         name = this.name,
         symbol = this.symbol,
         market = this.market,
-        currency = this.currency
+        currency = this.currency,
+        type = this.type
 )
