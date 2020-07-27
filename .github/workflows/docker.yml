@@ -37,6 +37,14 @@ jobs:
           echo "Running Build job"
           mvn clean install -Dregistry=https://maven.pkg.github.com/mauquoic -Dtoken=2490bf1edc7fc87a2e674e6f697de65a445c9415 -Dspring.profiles.active=test
 
+      # Integration tests
+      - name: Build
+        run: |
+          echo "Starting application"
+          mvn spring-boot:run -Dspring.profiles.active=test
+          echo "Running postman tests"
+          newman run application-tests.json
+
       # Runs the sonar analysis
       - name: Run SonarQube Analysis
         run: mvn sonar:sonar -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }}
