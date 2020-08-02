@@ -5,6 +5,8 @@ server:
       cookie:
         http-only: true
         secure: true
+  error:
+    include-message: always
 
 spring:
   main:
