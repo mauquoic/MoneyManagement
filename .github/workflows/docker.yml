@@ -49,7 +49,6 @@ jobs:
       # Integration tests
       - name: Run integration tests
         run: |
-
           echo "---------- Running image ----------"
           docker run --name money-management-server \
                      -p 8080:8080 \
