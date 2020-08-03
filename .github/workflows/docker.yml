@@ -59,7 +59,7 @@ jobs:
           newman run application-tests.json
 
       # Integration tests
-      - name: Login to dockerhub
+      - name: Upload image to dockerhub
         run: |
           echo "---------- Logging in to docker ----------"
           docker login --username=${{ secrets.DOCKER_USERNAME }} --password=${{ secrets.DOCKER_PASSWORD }}
