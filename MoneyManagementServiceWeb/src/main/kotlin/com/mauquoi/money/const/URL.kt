@@ -7,7 +7,6 @@ import com.mauquoi.money.const.URL.PathVariable.MARKET
 import com.mauquoi.money.const.URL.PathVariable.POSITION_ID
 import com.mauquoi.money.const.URL.PathVariable.STOCK_SYMBOL
 import com.mauquoi.money.const.URL.PathVariable.USER_ID
-import com.mauquoi.money.const.URL.Shared.API_BASE
 import com.mauquoi.money.const.URL.Shared.USER_BASE
 
 object URL {
@@ -31,7 +30,7 @@ object URL {
     }
 
     object Currency {
-        const val BASE = "$API_BASE/currencies"
+        const val BASE = "/currencies"
         const val CONVERSION_RATES = "/conversion-rates"
     }
 
@@ -40,7 +39,7 @@ object URL {
     }
 
     object Market {
-        const val BASE = "$API_BASE/markets"
+        const val BASE = "/markets"
         const val STOCK_NAME = "/{$MARKET}/stocks/{$STOCK_SYMBOL}"
         const val STOCKS_BY_MARKET = "/{$MARKET}/stocks"
     }
@@ -53,9 +52,8 @@ object URL {
     }
 
     object Shared {
-        const val API_BASE = "/api/v1"
         const val USERS = "/users"
-        const val USER_BASE = "$API_BASE$USERS"
+        const val USER_BASE = "$USERS"
     }
 
     object PathVariable {

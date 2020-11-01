@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController
 import javax.inject.Inject
 
 @RestController
-@RequestMapping("/api/v1/users/{userId}/overview")
+@RequestMapping("/users/{userId}/overview")
 class OverviewController @Inject constructor(private val stockService: StockService,
                                              private val accountService: AccountService,
                                              private val depositService: DepositService,

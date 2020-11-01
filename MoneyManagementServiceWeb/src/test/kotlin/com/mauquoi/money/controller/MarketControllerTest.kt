@@ -60,7 +60,7 @@ internal class MarketControllerTest {
     fun getStockName() {
         every { stockService.getStockName(capture(capturedStockSymbol), capture(capturedMarket)) } returns TestObjectCreator.createExchange().stocks[0]
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/markets/US/stocks/ACN")
+        mockMvc.perform(MockMvcRequestBuilders.get("/markets/US/stocks/ACN")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk)
                 .andExpect(MockMvcResultMatchers.jsonPath("name", CoreMatchers.`is`("Accenture")))
@@ -78,7 +78,7 @@ internal class MarketControllerTest {
         every { stockService.getStockExchange(capture(capturedMarket)) } returns listOf(TestObjectCreator.createUsStock(), TestObjectCreator.createChStock())
         every { currencyService.getCurrencyForMarket(any()) } returns Currency.getInstance("USD")
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/markets/US/stocks")
+        mockMvc.perform(MockMvcRequestBuilders.get("/markets/US/stocks")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk)
                 .andExpect(MockMvcResultMatchers.jsonPath("market", CoreMatchers.`is`("US")))
@@ -93,7 +93,7 @@ internal class MarketControllerTest {
 
     @Test
     fun getMarkets() {
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/markets")
+        mockMvc.perform(MockMvcRequestBuilders.get("/markets")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk)
                 .andExpect(MockMvcResultMatchers.jsonPath("$", hasSize<Int>(62)))

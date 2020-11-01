@@ -42,7 +42,7 @@ internal class CurrencyControllerTest {
     fun getCurrencies() {
         every { currencyService.getCurrencies() } returns CurrencyConfiguration().supportedCurrencies()
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/currencies")
+        mockMvc.perform(MockMvcRequestBuilders.get("/currencies")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk)
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0]", CoreMatchers.`is`("EUR")))
@@ -54,7 +54,7 @@ internal class CurrencyControllerTest {
     fun getConversionRates() {
         every { currencyService.getRates(capture(capturedCurrency)) } returns TestObjectCreator.createCurrencyLookup()
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/currencies/conversion-rates?base-currency=USD")
+        mockMvc.perform(MockMvcRequestBuilders.get("/currencies/conversion-rates?base-currency=USD")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk)
                 .andExpect(MockMvcResultMatchers.jsonPath("base", CoreMatchers.`is`("USD")))

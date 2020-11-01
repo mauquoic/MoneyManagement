@@ -45,7 +45,7 @@ internal class UserControllerTest {
     fun getPreferences() {
         every { userService.getPreferences(capture(capturedUserId)) } returns UserPreferences()
 
-        mockMvc.perform(get("/api/v1/users/1/preferences")
+        mockMvc.perform(get("/users/1/preferences")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("locale", `is`("en_GB")))
@@ -59,7 +59,7 @@ internal class UserControllerTest {
 
         val preferences = UserPreferences(currency = Currency.getInstance("CNY"))
 
-        mockMvc.perform(put("/api/v1/users/1/preferences")
+        mockMvc.perform(put("/users/1/preferences")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(preferences)))
                 .andExpect(status().isNoContent)

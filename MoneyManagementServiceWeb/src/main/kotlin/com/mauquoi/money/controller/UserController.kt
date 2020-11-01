@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*
 import javax.inject.Inject
 
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping("/users")
 class UserController @Inject constructor(private val userService: UserService) {
 
     @GetMapping("/{userId}/preferences")

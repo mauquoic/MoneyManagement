@@ -55,7 +55,7 @@ internal class PositionControllerTest {
     fun getPositions() {
         every { stockService.getPositions(capture(capturedUserId)) } returns TestObjectCreator.createPositions()
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/1/positions")
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/1/positions")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk)
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].id", `is`(1)))
@@ -72,7 +72,7 @@ internal class PositionControllerTest {
     fun getPosition() {
         every { stockService.getPosition(capture(capturedPositionId)) } returns TestObjectCreator.createPositions()[1]
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/1/positions/2")
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/1/positions/2")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk)
                 .andExpect(MockMvcResultMatchers.jsonPath("id", `is`(2)))
@@ -89,7 +89,7 @@ internal class PositionControllerTest {
     fun editPosition() {
         every { stockService.editPosition(capture(capturedPositionId), capture(capturedPosition)) } just runs
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/users/1/positions/3")
+        mockMvc.perform(MockMvcRequestBuilders.put("/users/1/positions/3")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(TestObjectCreator.createPositions()[1])))
                 .andExpect(MockMvcResultMatchers.status().isNoContent)
@@ -106,7 +106,7 @@ internal class PositionControllerTest {
         every { stockService.addPosition(capture(capturedUserId), capture(capturedPosition)) } returns TestObjectCreator.createPositions()[0]
         every { currencyService.verifyCurrencyCompatibility(any(), any()) } just runs
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users/2/positions")
+        mockMvc.perform(MockMvcRequestBuilders.post("/users/2/positions")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(TestObjectCreator.createPositions()[0])))
                 .andExpect(MockMvcResultMatchers.status().isCreated)
@@ -122,7 +122,7 @@ internal class PositionControllerTest {
         every { stockService.addDividend(capture(capturedPositionId), capture(capturedDividend)) } returns TestObjectCreator.createPositions()[0]
 
         val dividendDto = DividendDto(amount = 42.0, date = LocalDate.now())
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users/2/positions/4/dividends")
+        mockMvc.perform(MockMvcRequestBuilders.post("/users/2/positions/4/dividends")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dividendDto)))
@@ -142,7 +142,7 @@ internal class PositionControllerTest {
 
         val positionDto = TransactionDto(amount= 10, purchasePrice = 12.12, fees = 25.1, date = LocalDate.of(2020, 1, 9))
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users/2/positions/3/transactions")
+        mockMvc.perform(MockMvcRequestBuilders.post("/users/2/positions/3/transactions")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(positionDto)))

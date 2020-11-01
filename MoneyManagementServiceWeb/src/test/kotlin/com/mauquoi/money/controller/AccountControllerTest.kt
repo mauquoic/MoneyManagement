@@ -56,7 +56,7 @@ internal class AccountControllerTest {
     fun getAccounts() {
         every { accountService.getAccounts(capture(capturedUserId)) } returns TestObjectCreator.createAccounts()
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/1/accounts")
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/1/accounts")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk)
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].name", CoreMatchers.`is`("Account")))
@@ -73,7 +73,7 @@ internal class AccountControllerTest {
         val account = TestObjectCreator.createAccount()
         account.id = null
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users/1/accounts")
+        mockMvc.perform(MockMvcRequestBuilders.post("/users/1/accounts")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(account)))
                 .andExpect(MockMvcResultMatchers.status().isCreated)
@@ -94,7 +94,7 @@ internal class AccountControllerTest {
     fun getAccount() {
         every { accountService.getAccount(capture(capturedAccountId)) } returns TestObjectCreator.createAccount()
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/1/accounts/2")
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/1/accounts/2")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk)
                 .andExpect(MockMvcResultMatchers.jsonPath("name", CoreMatchers.`is`("Account")))
@@ -109,7 +109,7 @@ internal class AccountControllerTest {
     fun editAccount() {
         every { accountService.editAccount(capture(capturedAccountId), capture(capturedAccount)) } just runs
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/users/1/accounts/3")
+        mockMvc.perform(MockMvcRequestBuilders.put("/users/1/accounts/3")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(TestObjectCreator.createAccount())))
                 .andExpect(MockMvcResultMatchers.status().isNoContent)
@@ -124,7 +124,7 @@ internal class AccountControllerTest {
     fun updateAccount() {
         every { accountService.updateAccountValue(capture(capturedAccountId), capture(capturedAmount)) } just runs
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users/1/accounts/4/update?amount=2500")
+        mockMvc.perform(MockMvcRequestBuilders.post("/users/1/accounts/4/update?amount=2500")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isCreated)
 
@@ -138,7 +138,7 @@ internal class AccountControllerTest {
     fun addAccountAudit() {
         every { accountService.addAccountSnapshot(capture(capturedAccountId), capture(capturedSnapshot)) } just runs
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users/1/accounts/5/audits")
+        mockMvc.perform(MockMvcRequestBuilders.post("/users/1/accounts/5/audits")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(TestObjectCreator.createAccountSnapshotWithoutAccount())))
                 .andExpect(MockMvcResultMatchers.status().isCreated)
@@ -152,7 +152,7 @@ internal class AccountControllerTest {
     fun editAccountAudit() {
         every { accountService.editAudit(capture(capturedSnapshotId), capture(capturedSnapshot)) } just runs
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/users/1/accounts/3/audits/2")
+        mockMvc.perform(MockMvcRequestBuilders.put("/users/1/accounts/3/audits/2")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(TestObjectCreator.createAccountSnapshot())))
                 .andExpect(MockMvcResultMatchers.status().isNoContent)
@@ -172,7 +172,7 @@ internal class AccountControllerTest {
         )
         every { accountService.getHistory(capture(capturedAccountId)) } returns history
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/1/accounts/4/history")
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/1/accounts/4/history")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk)
                 .andExpect(MockMvcResultMatchers.jsonPath("current.name", CoreMatchers.`is`("Account")))

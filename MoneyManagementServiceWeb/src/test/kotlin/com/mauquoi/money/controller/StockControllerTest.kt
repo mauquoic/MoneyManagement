@@ -40,7 +40,7 @@ internal class StockControllerTest {
     fun getStockValue() {
         every { stockService.getStockPrice(capture(capturedStockSymbol)) } returns 34.0
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/stocks/ACN")
+        mockMvc.perform(MockMvcRequestBuilders.get("/stocks/ACN")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk)
                 .andExpect(MockMvcResultMatchers.jsonPath("$", CoreMatchers.`is`(34.0)))

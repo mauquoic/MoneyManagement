@@ -56,7 +56,7 @@ internal class DepositControllerTest {
     fun getDeposits() {
         every { depositService.getDeposits(capture(capturedUserId)) } returns TestObjectCreator.createDeposits()
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/1/deposits")
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/1/deposits")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk)
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].name", CoreMatchers.`is`("Deposit")))
@@ -73,7 +73,7 @@ internal class DepositControllerTest {
         val deposit = TestObjectCreator.createDeposit()
         deposit.id = null
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users/1/deposits")
+        mockMvc.perform(MockMvcRequestBuilders.post("/users/1/deposits")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(deposit)))
                 .andExpect(MockMvcResultMatchers.status().isCreated)
@@ -94,7 +94,7 @@ internal class DepositControllerTest {
     fun getDeposit() {
         every { depositService.getDeposit(capture(capturedDepositId)) } returns TestObjectCreator.createDeposit()
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/1/deposits/2")
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/1/deposits/2")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk)
                 .andExpect(MockMvcResultMatchers.jsonPath("name", CoreMatchers.`is`("Deposit")))
@@ -109,7 +109,7 @@ internal class DepositControllerTest {
     fun editDeposit() {
         every { depositService.editDeposit(capture(capturedDepositId), capture(capturedDeposit)) } just runs
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/users/1/deposits/3")
+        mockMvc.perform(MockMvcRequestBuilders.put("/users/1/deposits/3")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(TestObjectCreator.createDeposit())))
                 .andExpect(MockMvcResultMatchers.status().isNoContent)
@@ -124,7 +124,7 @@ internal class DepositControllerTest {
     fun updateDeposit() {
         every { depositService.updateDepositValue(capture(capturedDepositId), capture(capturedAmount)) } just runs
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users/1/deposits/4/update?amount=2500")
+        mockMvc.perform(MockMvcRequestBuilders.post("/users/1/deposits/4/update?amount=2500")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNoContent)
 
@@ -138,7 +138,7 @@ internal class DepositControllerTest {
     fun addDepositAudit() {
         every { depositService.addDepositSnapshot(capture(capturedDepositId), capture(capturedSnapshot)) } just runs
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users/1/deposits/5/audits")
+        mockMvc.perform(MockMvcRequestBuilders.post("/users/1/deposits/5/audits")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(TestObjectCreator.createDepositSnapshotWithoutDeposit())))
                 .andExpect(MockMvcResultMatchers.status().isCreated)
@@ -152,7 +152,7 @@ internal class DepositControllerTest {
     fun editDepositAudit() {
         every { depositService.editAudit(capture(capturedSnapshotId), capture(capturedSnapshot)) } just runs
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/users/1/deposits/3/audits/2")
+        mockMvc.perform(MockMvcRequestBuilders.put("/users/1/deposits/3/audits/2")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(TestObjectCreator.createDepositSnapshot())))
                 .andExpect(MockMvcResultMatchers.status().isNoContent)
@@ -172,7 +172,7 @@ internal class DepositControllerTest {
         )
         every { depositService.getHistory(capture(capturedDepositId)) } returns history
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/1/deposits/4/history")
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/1/deposits/4/history")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk)
                 .andExpect(MockMvcResultMatchers.jsonPath("current.name", CoreMatchers.`is`("Deposit")))

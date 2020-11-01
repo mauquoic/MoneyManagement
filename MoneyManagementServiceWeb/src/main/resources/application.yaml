@@ -5,6 +5,7 @@ server:
       cookie:
         http-only: true
         secure: true
+    context-path: /api/v1
   error:
     include-message: always
 

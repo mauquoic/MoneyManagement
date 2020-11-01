@@ -60,7 +60,7 @@ internal class OverviewControllerTest {
                 distribution = mapOf(Currency.getInstance("USD") to BigDecimal.ONE,
                         Currency.getInstance("CHF") to BigDecimal.ZERO))
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/1/overview")
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/1/overview")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk)
                 .andExpect(MockMvcResultMatchers.jsonPath("stocks.mainCurrency", CoreMatchers.`is`("USD")))
